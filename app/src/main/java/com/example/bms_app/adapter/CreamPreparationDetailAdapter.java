@@ -38,13 +38,18 @@ public class CreamPreparationDetailAdapter extends RecyclerView.Adapter<CreamPre
     @Override
     public void onBindViewHolder(@NonNull CreamPreparationDetailAdapter.MyViewHolder myViewHolder, int i) {
         final SfItemDetail model=cpDetailList.get(i);
-        myViewHolder.tvItemName.setText(model.getRmName());
         int srNo=i+1;
         myViewHolder.tvSrNo.setText(""+srNo);
+        myViewHolder.tvQty.setText(""+model.getRmQty());
+        myViewHolder.edEditQty.setText(""+model.getRmQty());
 
-        myViewHolder.tvQty.setText(""+model.getRmQty()/1000);
-        myViewHolder.edEditQty.setText(""+model.getRmQty()/1000);
-        myViewHolder.tvUOM.setText(""+model.getRmUnit());
+        String strData=model.getRmName();
+        String[] arrayString = strData.split("#");
+        String name = arrayString[0];
+        String unit = arrayString[1];
+
+        myViewHolder.tvItemName.setText(name);
+        myViewHolder.tvUOM.setText(unit);
 
         Log.e("Decimal","--------------------------------------------------"+model.getRmQty());
         Log.e("Model","--------------------------------------------------"+model);
@@ -52,10 +57,10 @@ public class CreamPreparationDetailAdapter extends RecyclerView.Adapter<CreamPre
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("rm");
+            myViewHolder.tvType.setText("RM");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("sf");
+            myViewHolder.tvType.setText("SF");
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {

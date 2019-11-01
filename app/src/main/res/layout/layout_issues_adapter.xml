@@ -55,7 +55,8 @@
             android:background="@android:drawable/editbox_background_normal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
-            android:inputType="number"
+            android:inputType="none"
+            android:enabled="false"
             android:text="0" />
 
         <TextView

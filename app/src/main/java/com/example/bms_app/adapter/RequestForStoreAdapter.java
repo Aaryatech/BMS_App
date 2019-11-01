@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,12 +22,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bms_app.R;
+import com.example.bms_app.activity.MainActivity;
 import com.example.bms_app.constants.Constants;
+import com.example.bms_app.fragment.RequestForStoreFragment;
 import com.example.bms_app.model.BillOfMaterialDetailed;
 import com.example.bms_app.model.BillOfMaterialHeader;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.DeptDetail;
 import com.example.bms_app.model.FrItemStockConfigure;
+import com.example.bms_app.model.Info;
+import com.example.bms_app.model.Login;
 import com.example.bms_app.model.ProdPlanHeader;
 import com.example.bms_app.model.SfPlanDetailForMixing;
 import com.example.bms_app.utils.CommonDialog;
@@ -51,10 +56,13 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
     private Context context;
     int fromId=0,toId=0;
     String fromName,toName;
+    Login login;
+     CommonDialog commonDialog1;
 
-    public RequestForStoreAdapter(List<ProdPlanHeader> reqStoreList, Context context) {
+    public RequestForStoreAdapter(List<ProdPlanHeader> reqStoreList, Context context, Login login) {
         this.reqStoreList = reqStoreList;
         this.context = context;
+        this.login = login;
     }
 
 
@@ -112,13 +120,20 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
             }
         });
 
-        if(model.getIsMixing()==0)
-        {
-            myViewHolder.tvMixing.setVisibility(View.VISIBLE);
-        }
+//        if(model.getIsMixing()==0)
+//        {
+//            myViewHolder.tvMixing.setVisibility(View.VISIBLE);
+//        }
+
         if(model.getIsStoreBom()==0)
         {
-            myViewHolder.tvStore.setVisibility(View.VISIBLE);
+            if(model.getProductionStatus().equalsIgnoreCase("5"))
+            {
+                myViewHolder.tvStore.setVisibility(View.GONE);
+            }else{
+                myViewHolder.tvStore.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 
@@ -185,7 +200,8 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
                 public void onClick(View view) {
 
                     dismiss();
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 //                    String dateFormate =sdf.format(System.currentTimeMillis());
                     // new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 
@@ -209,8 +225,8 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
                     Log.e("Calender Formate","--------------------------------------"+today);
 
 
-                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),sdf.format(System.currentTimeMillis()),1,fromId,fromName,toId,toName,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),0,0,0,0,0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
-                    saveDetail(billOfMaterialHeader);
+                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),sdf1.format(System.currentTimeMillis()),1,fromId,fromName,toId,toName,login.getUser().getId(),sdf1.format(System.currentTimeMillis()),login.getUser().getId(),sdf1.format(System.currentTimeMillis()),0,0,0,0,0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
+                    saveDetail(billOfMaterialHeader,prodPlanHeader);
                 }
             });
 
@@ -224,7 +240,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
             if (detailList != null) {
                 billDetailList.clear();
                 for (int i = 0; i < detailList.size(); i++) {
-                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,0,detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getRmQty(),0,0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
+                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,0,detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getRmQty(),detailList.get(i).getRmQty(),0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
                     billDetailList.add(billOfMaterialDetailed);
                 }
 
@@ -238,28 +254,28 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
 
     }
 
-    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader) {
+    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader, final ProdPlanHeader prodPlanHeader) {
         Log.e("PARAMETER","---------------------------------------PRODUCTION MATERIAL HEADER--------------------------"+billOfMaterialHeader);
 
         if (Constants.isOnline(context)) {
-            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-            commonDialog.show();
+             commonDialog1 = new CommonDialog(context, "Loading", "Please Wait...");
+            commonDialog1.show();
 
-            Call<BillOfMaterialHeader> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
-            listCall.enqueue(new Callback<BillOfMaterialHeader>() {
+            Call<Info> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
+            listCall.enqueue(new Callback<Info>() {
                 @Override
-                public void onResponse(Call<BillOfMaterialHeader> call, Response<BillOfMaterialHeader> response) {
+                public void onResponse(Call<Info> call, Response<Info> response) {
                     try {
                         if (response.body() != null) {
 
                             Log.e("HEADER : ", " ------------------------------SAVE PRODUCTION HEADER------------------------ " + response.body());
-                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(context, ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            getupdateisMixingandBom(prodPlanHeader.getProductionHeaderId(),1,toId);
 
-
-                            commonDialog.dismiss();
+                            commonDialog1.dismiss();
 
                         } else {
-                            commonDialog.dismiss();
+                            commonDialog1.dismiss();
                             Log.e("Data Null : ", "-----------");
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
@@ -277,7 +293,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
 
                         }
                     } catch (Exception e) {
-                        commonDialog.dismiss();
+                        commonDialog1.dismiss();
                         Log.e("Exception : ", "-----------" + e.getMessage());
                         e.printStackTrace();
 
@@ -298,8 +314,93 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
                 }
 
                 @Override
-                public void onFailure(Call<BillOfMaterialHeader> call, Throwable t) {
-                    commonDialog.dismiss();
+                public void onFailure(Call<Info> call, Throwable t) {
+                    commonDialog1.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                    builder.setTitle("" + context.getResources().getString(R.string.app_name));
+                    builder.setMessage("Unable to process! please try again.");
+
+                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+            });
+        } else {
+            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getupdateisMixingandBom(Integer productionHeaderId, int flag, Integer dept) {
+        Log.e("PARAMETER","                 PROD HEADER ID     "+productionHeaderId+"      FLAG      "+flag+"          DEPT            "+dept);
+        if (Constants.isOnline(context)) {
+//            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
+//            commonDialog.show();
+
+            Call<Integer> listCall = Constants.myInterface.updateisMixingandBom(productionHeaderId,flag,dept);
+            listCall.enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("UPDATE : ", " ------------------------------UPDATE STORE------------------------ " + response.body());
+                            MainActivity activity=(MainActivity)context;
+                            FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new RequestForStoreFragment(), "MainFragment");
+                            ft.commit();
+                            commonDialog1.dismiss();
+
+                        } else {
+                            commonDialog1.dismiss();
+                            Log.e("Data Null : ", "-----------");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                            builder.setTitle("" + context.getResources().getString(R.string.app_name));
+                            builder.setMessage("Unable to process! please try again.");
+
+                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                        }
+                    } catch (Exception e) {
+                        commonDialog1.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                        builder.setTitle("" + context.getResources().getString(R.string.app_name));
+                        builder.setMessage("Unable to process! please try again.");
+
+                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    commonDialog1.dismiss();
                     Log.e("onFailure : ", "-----------" + t.getMessage());
                     t.printStackTrace();
 

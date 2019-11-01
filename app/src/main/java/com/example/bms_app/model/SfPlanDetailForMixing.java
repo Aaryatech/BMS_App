@@ -43,6 +43,7 @@ public class SfPlanDetailForMixing {
     private float total;
 
     private float editTotal;
+    private float prodQty;
 
     private Boolean isChecked;
 
@@ -150,6 +151,14 @@ public class SfPlanDetailForMixing {
         this.editTotal = editTotal;
     }
 
+    public float getProdQty() {
+        return prodQty;
+    }
+
+    public void setProdQty(float prodQty) {
+        this.prodQty = prodQty;
+    }
+
     public Boolean getChecked() {
         return isChecked;
     }
@@ -173,6 +182,8 @@ public class SfPlanDetailForMixing {
                 ", singleCut=" + singleCut +
                 ", doubleCut=" + doubleCut +
                 ", total=" + total +
+                ", editTotal=" + editTotal +
+                ", prodQty=" + prodQty +
                 ", isChecked=" + isChecked +
                 '}';
     }

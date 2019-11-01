@@ -289,18 +289,18 @@ public class MainActivity extends AppCompatActivity
             childList.put(menuModel, childModelsList);
         }
 
-        childModelsList = new ArrayList<>();
-        menuModel = new MenuModel("Special Cake Department", true, true, "Special Cake Department"); //Menu of Python Tutorials
-        headerList.add(menuModel);
-        childModel = new MenuModel("BMS Request", false, false, "BMS Request");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("BMS Request List", false, false, "BMS Request List");
-        childModelsList.add(childModel);
-
-        if (menuModel.hasChildren) {
-            childList.put(menuModel, childModelsList);
-        }
+//        childModelsList = new ArrayList<>();
+//        menuModel = new MenuModel("Special Cake Department", true, true, "Special Cake Department"); //Menu of Python Tutorials
+//        headerList.add(menuModel);
+//        childModel = new MenuModel("BMS Request", false, false, "BMS Request");
+//        childModelsList.add(childModel);
+//
+//        childModel = new MenuModel("BMS Request List", false, false, "BMS Request List");
+//        childModelsList.add(childModel);
+//
+//        if (menuModel.hasChildren) {
+//            childList.put(menuModel, childModelsList);
+//        }
     }
 
     private void populateExpandableList() {

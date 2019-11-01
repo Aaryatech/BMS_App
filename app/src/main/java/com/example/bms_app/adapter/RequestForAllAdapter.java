@@ -108,21 +108,27 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
         myViewHolder.tvDate.setText(""+model.getReqDate());
         myViewHolder.tvDept.setText(""+model.getToDeptName());
 
-        if(model.getStatus()==0)
+        try {
+            if(model.getStatus()==0)
+            {
+                myViewHolder.tvStatus.setText("Pending");
+            }else if(model.getStatus()==1)
+            {
+                myViewHolder.tvStatus.setText("Approved");
+            }if(model.getStatus()==2)
+            {
+                myViewHolder.tvStatus.setText("Rejected");
+            }if(model.getStatus()==3)
+            {
+                myViewHolder.tvStatus.setText("Approved Rejected");
+            }if(model.getStatus()==4)
+            {
+                myViewHolder.tvStatus.setText("Request Close");
+            }
+
+        }catch (Exception e)
         {
-            myViewHolder.tvStatus.setText("Pending");
-        }else if(model.getStatus()==1)
-        {
-            myViewHolder.tvStatus.setText("Approved");
-        }if(model.getStatus()==2)
-        {
-            myViewHolder.tvStatus.setText("Rejected");
-        }if(model.getStatus()==3)
-        {
-            myViewHolder.tvStatus.setText("Approved Rejected");
-        }if(model.getStatus()==4)
-        {
-            myViewHolder.tvStatus.setText("Request Close");
+            e.printStackTrace();
         }
 
 

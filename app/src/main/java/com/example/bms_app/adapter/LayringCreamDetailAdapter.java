@@ -41,20 +41,27 @@ public class LayringCreamDetailAdapter  extends RecyclerView.Adapter<LayringCrea
     @Override
     public void onBindViewHolder(@NonNull LayringCreamDetailAdapter.MyViewHolder myViewHolder, int i) {
         final SfItemDetail model=layringDetailList.get(i);
-        myViewHolder.tvItemName.setText(model.getRmName());
-        myViewHolder.tvQty.setText(""+sfPlanDetailForMixing.getEditTotal()/1000);
-        myViewHolder.edEditQty.setText(""+sfPlanDetailForMixing.getEditTotal()/1000);
-        myViewHolder.tvUOM.setText(""+model.getRmUnit());
+
+        myViewHolder.tvQty.setText(""+model.getRmQty());
+        myViewHolder.edEditQty.setText(""+model.getRmQty());
+
+        String strData=model.getRmName();
+        String[] arrayString = strData.split("#");
+        String name = arrayString[0];
+        String unit = arrayString[1];
+
+        myViewHolder.tvItemName.setText(name);
+        myViewHolder.tvUOM.setText(""+unit);
 
         Log.e("Decimal","--------------------------------------------------"+model.getRmQty()/1000);
         Log.e("Model","--------------------------------------------------"+model);
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("rm");
+            myViewHolder.tvType.setText("RM");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("sf");
+            myViewHolder.tvType.setText("SF");
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {

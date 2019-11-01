@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="5dp">
 
 
     <LinearLayout
@@ -26,7 +26,7 @@
         <TextView
             android:id="@+id/tvItemName"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"

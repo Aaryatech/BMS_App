@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.RequestForMixingFragment">
 
     <android.support.v7.widget.RecyclerView
@@ -12,16 +13,102 @@
         android:layout_above="@id/btnSetProduction"
         android:layout_alignParentTop="true" />
 
+
+
+    <TextView
+        android:id="@+id/tv_fab1"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/circle_pink"
+        android:text="CP"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="#ffffff"
+        android:visibility="invisible" />
+
+
+    <TextView
+        android:id="@+id/tv_fab2"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="150dp"
+        android:background="@drawable/circle_pink"
+        android:text="CCP"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="#ffffff"
+        android:visibility="invisible" />
+
+
+    <TextView
+        android:id="@+id/tv_fab3"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="200dp"
+        android:background="@drawable/circle_pink"
+        android:text="LCP"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="#ffffff"
+        android:visibility="invisible"/>
+
+
+    <TextView
+        android:id="@+id/tv_fab4"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="250dp"
+        android:background="@drawable/circle_pink"
+        android:text="Issue"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="#ffffff"
+        android:visibility="invisible"/>
+
+
+    <TextView
+        android:id="@+id/tv_fab5"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="300dp"
+        android:background="@drawable/circle_pink"
+        android:text="MP"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="#ffffff"
+        android:visibility="invisible" />
+
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        android:layout_marginTop="80dp"
-        android:src="@drawable/ic_filter"
-        />
+        android:layout_gravity="bottom|end"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:visibility="visible"
+        app:srcCompat="@drawable/ic_fab_add"
+        tools:ignore="VectorDrawableCompat" />
+
 
     <Button
         android:id="@+id/btnSetProduction"
@@ -29,6 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
+        android:visibility="gone"
         android:background="@drawable/rounded_corner_button"
         android:fontFamily="@font/sf_ui_bold"
         android:text="Set for Production"

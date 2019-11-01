@@ -33,6 +33,18 @@ public class SfItemDetail {
     @Expose
     private Integer delStatus;
 
+    public SfItemDetail(Integer sfDid, Integer sfId, Integer rmType, Integer rmId, String rmName, float rmQty, Integer rmUnit, Integer rmWeight, Integer delStatus) {
+        this.sfDid = sfDid;
+        this.sfId = sfId;
+        this.rmType = rmType;
+        this.rmId = rmId;
+        this.rmName = rmName;
+        this.rmQty = rmQty;
+        this.rmUnit = rmUnit;
+        this.rmWeight = rmWeight;
+        this.delStatus = delStatus;
+    }
+
     public Integer getSfDid() {
         return sfDid;
     }

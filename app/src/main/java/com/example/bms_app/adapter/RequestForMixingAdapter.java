@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,12 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bms_app.R;
+import com.example.bms_app.activity.MainActivity;
 import com.example.bms_app.constants.Constants;
+import com.example.bms_app.fragment.RequestForMixingFragment;
 import com.example.bms_app.model.BillOfMaterialDetailed;
 import com.example.bms_app.model.BillOfMaterialHeader;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.DeptDetail;
 import com.example.bms_app.model.FrItemStockConfigure;
+import com.example.bms_app.model.Info;
+import com.example.bms_app.model.Login;
 import com.example.bms_app.model.ProdPlanHeader;
 import com.example.bms_app.model.SfPlanDetailForMixing;
 import com.example.bms_app.utils.CommonDialog;
@@ -49,10 +55,13 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
     private Context context;
     int fromId=0,toId=0;
     String fromName,toName;
+    Login login;
+     CommonDialog commonDialog1;
 
-    public RequestForMixingAdapter(List<ProdPlanHeader> reqMixingList, Context context) {
+    public RequestForMixingAdapter(List<ProdPlanHeader> reqMixingList, Context context, Login login) {
         this.reqMixingList = reqMixingList;
         this.context = context;
+        this.login = login;
     }
 
     @NonNull
@@ -93,6 +102,20 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
             myViewHolder.tvStatus.setText("Closed");
         }
 
+//        myViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(model.getProductionStatus().equalsIgnoreCase("5"))
+//                {
+//                    Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+//                }else{
+//                    getProductionSetting("MIX",model.getProductionHeaderId(),model);
+//                }
+//
+//
+//            }
+//        });
+
         myViewHolder.tvMixing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,12 +137,18 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
 
         if(model.getIsMixing()==0)
         {
-            myViewHolder.tvMixing.setVisibility(View.VISIBLE);
+            if(model.getProductionStatus().equalsIgnoreCase("5"))
+            {
+                myViewHolder.tvMixing.setVisibility(View.GONE);
+            }else{
+                myViewHolder.tvMixing.setVisibility(View.VISIBLE);
+            }
+
         }
-        if(model.getIsStoreBom()==0)
-        {
-            myViewHolder.tvStore.setVisibility(View.VISIBLE);
-        }
+//        if(model.getIsStoreBom()==0)
+//        {
+//            myViewHolder.tvStore.setVisibility(View.VISIBLE);
+//        }
     }
 
     @Override
@@ -130,12 +159,15 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView tvProductId,tvStatus,tvDate,tvIsPlane;
         public TextView tvMixing,tvStore;
+        public CardView cardView;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvProductId=itemView.findViewById(R.id.tvProductId);
             tvStatus=itemView.findViewById(R.id.tvStatus);
             tvDate=itemView.findViewById(R.id.tvDate);
             tvIsPlane=itemView.findViewById(R.id.tvIsPlane);
+
+            cardView=itemView.findViewById(R.id.cardView);
 
             tvMixing=itemView.findViewById(R.id.ivMixing);
             tvStore=itemView.findViewById(R.id.ivStore);
@@ -186,6 +218,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
 
                     dismiss();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
                    // sdf.format(System.currentTimeMillis())
 //                    String dateFormate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
@@ -194,8 +227,8 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
                     String currentDate = formatter.format(todayDate);
                     Log.e("Mytag","---------------------------todayString-------------------------------"+currentDate);
 
-                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),sdf.format(System.currentTimeMillis()),1,fromId,fromName,toId,toName,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),0,0,0,0,0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
-                    saveDetail(billOfMaterialHeader);
+                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),sdf1.format(System.currentTimeMillis()),1,fromId,fromName,toId,toName,login.getUser().getId(),sdf1.format(System.currentTimeMillis()),login.getUser().getId(),sdf1.format(System.currentTimeMillis()),0,0,0,0,0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
+                    saveDetail(billOfMaterialHeader,prodPlanHeader);
                 }
             });
 
@@ -209,10 +242,10 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
             if (detailList != null) {
                 billDetailList.clear();
                 for (int i = 0; i < detailList.size(); i++) {
-                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,detailList.get(i).getItemDetailId(),detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getRmQty(),0,0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
+                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,detailList.get(i).getItemDetailId(),detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getRmQty(),detailList.get(i).getRmQty(),0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
                     billDetailList.add(billOfMaterialDetailed);
                 }
-
+                Log.e("Mytag","---------------------------BILL DETAIL-------------------------------"+billDetailList);
                 mAdapter = new ProductionDetailAdapter(billDetailList,context);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
                 recyclerView.setLayoutManager(mLayoutManager);
@@ -224,28 +257,28 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
 
     }
 
-    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader) {
+    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader, final ProdPlanHeader prodPlanHeader) {
         Log.e("PARAMETER","---------------------------------------PRODUCTION MATERIAL HEADER--------------------------"+billOfMaterialHeader);
 
         if (Constants.isOnline(context)) {
-            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-            commonDialog.show();
+            commonDialog1 = new CommonDialog(context, "Loading", "Please Wait...");
+            commonDialog1.show();
 
-            Call<BillOfMaterialHeader> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
-            listCall.enqueue(new Callback<BillOfMaterialHeader>() {
+            Call<Info> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
+            listCall.enqueue(new Callback<Info>() {
                 @Override
-                public void onResponse(Call<BillOfMaterialHeader> call, Response<BillOfMaterialHeader> response) {
+                public void onResponse(Call<Info> call, Response<Info> response) {
                     try {
                         if (response.body() != null) {
 
                             Log.e("HEADER : ", " ------------------------------SAVE PRODUCTION HEADER------------------------ " + response.body());
-                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(context, ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            getupdateisMixingandBom(prodPlanHeader.getProductionHeaderId(),1,toId);
 
-
-                            commonDialog.dismiss();
+                            commonDialog1.dismiss();
 
                         } else {
-                            commonDialog.dismiss();
+                            commonDialog1.dismiss();
                             Log.e("Data Null : ", "-----------");
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
@@ -263,7 +296,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
 
                         }
                     } catch (Exception e) {
-                        commonDialog.dismiss();
+                        commonDialog1.dismiss();
                         Log.e("Exception : ", "-----------" + e.getMessage());
                         e.printStackTrace();
 
@@ -284,8 +317,8 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
                 }
 
                 @Override
-                public void onFailure(Call<BillOfMaterialHeader> call, Throwable t) {
-                    commonDialog.dismiss();
+                public void onFailure(Call<Info> call, Throwable t) {
+                    commonDialog1.dismiss();
                     Log.e("onFailure : ", "-----------" + t.getMessage());
                     t.printStackTrace();
 
@@ -308,6 +341,92 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
             Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void getupdateisMixingandBom(Integer productionHeaderId, int flag, Integer dept) {
+        Log.e("PARAMETER","                 PROD HEADER ID     "+productionHeaderId+"      FLAG      "+flag+"          DEPT            "+dept);
+        if (Constants.isOnline(context)) {
+//            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
+//            commonDialog.show();
+
+            Call<Integer> listCall = Constants.myInterface.updateisMixingandBom(productionHeaderId,flag,dept);
+            listCall.enqueue(new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("UPDATE : ", " ------------------------------UPDATE MIXING------------------------ " + response.body());
+                            MainActivity activity=(MainActivity)context;
+                            FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new RequestForMixingFragment(), "MainFragment");
+                            ft.commit();
+                            commonDialog1.dismiss();
+
+                        } else {
+                            commonDialog1.dismiss();
+                            Log.e("Data Null : ", "-----------");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                            builder.setTitle("" + context.getResources().getString(R.string.app_name));
+                            builder.setMessage("Unable to process! please try again.");
+
+                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                        }
+                    } catch (Exception e) {
+                        commonDialog1.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                        builder.setTitle("" + context.getResources().getString(R.string.app_name));
+                        builder.setMessage("Unable to process! please try again.");
+
+                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    commonDialog1.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                    builder.setTitle("" + context.getResources().getString(R.string.app_name));
+                    builder.setMessage("Unable to process! please try again.");
+
+                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+            });
+        } else {
+            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void getSettingValue(String prod) {
         Log.e("PARAMETER","                 SETTING KEY VALUES     "+prod);

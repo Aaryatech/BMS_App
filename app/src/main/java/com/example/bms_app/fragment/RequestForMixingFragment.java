@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -15,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -29,9 +32,12 @@ import android.widget.Toast;
 import com.example.bms_app.R;
 import com.example.bms_app.adapter.RequestForMixingAdapter;
 import com.example.bms_app.constants.Constants;
+import com.example.bms_app.model.Login;
 import com.example.bms_app.model.ProdPlanHeader;
 import com.example.bms_app.model.ProductionDetail;
 import com.example.bms_app.utils.CommonDialog;
+import com.example.bms_app.utils.CustomSharedPreference;
+import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +62,7 @@ public class RequestForMixingFragment extends Fragment implements View.OnClickLi
    // ProdPlanHeader productionDetail;
     RequestForMixingAdapter adapter;
     private String slugName;
+    Login loginUser;
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
@@ -70,6 +77,18 @@ public class RequestForMixingFragment extends Fragment implements View.OnClickLi
 
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);
+
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("HOME_ACTIVITY : ", "--------USER-------" + loginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
         fab.setOnClickListener(this);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
       //  sdf.format(System.currentTimeMillis())
@@ -100,7 +119,7 @@ public class RequestForMixingFragment extends Fragment implements View.OnClickLi
 
                             Log.e("Production model","------------------------------------------"+productionList);
 
-                            adapter = new RequestForMixingAdapter(productionList, getContext());
+                            adapter = new RequestForMixingAdapter(productionList, getContext(),loginUser);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -137,6 +156,34 @@ public class RequestForMixingFragment extends Fragment implements View.OnClickLi
         if(v.getId()==R.id.fab)
         {
             new FilterDialog(getContext()).show();
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_filter);
+        item.setVisible(true);
+
+
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_filter:
+                new FilterDialog(getContext()).show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
     }
 

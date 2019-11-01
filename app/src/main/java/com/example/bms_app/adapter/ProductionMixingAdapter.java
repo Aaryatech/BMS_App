@@ -34,6 +34,7 @@ import com.example.bms_app.constants.Constants;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.FrItemStockConfigure;
 import com.example.bms_app.model.GetTempMixItemDetailList;
+import com.example.bms_app.model.Info;
 import com.example.bms_app.model.MixingDetail;
 import com.example.bms_app.model.MixingDetailedSave;
 import com.example.bms_app.model.MixingHeaderDetail;
@@ -75,7 +76,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
     ArrayList<MixingDetailedSave> mixList = new ArrayList<>();
     private Context context;
      CommonDialog commonDialog,commonDialog1;
-
+     int deptId=0;
 
     //------PDF------
     private PdfPCell cell;
@@ -184,7 +185,9 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                             // frItemStockConfiguresList.clear();
                             Configure configure=response.body();
                             frItemStockConfiguresList=response.body().getFrItemStockConfigure();
+
                             for(int i=0;i<frItemStockConfiguresList.size();i++) {
+                                deptId=configure.getFrItemStockConfigure().get(i).getSettingValue();
                                 getMixingDetail(productionHeaderId, configure.getFrItemStockConfigure().get(i).getSettingValue(),prodPlanHeader);
                             }
 
@@ -271,9 +274,11 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
         ProdPlanHeader prodPlanHeader;
         String dept;
 
+
         public DeptDialog(Context context, ProdPlanHeader prodPlanHeader) {
             super(context);
             this.prodPlanHeader=prodPlanHeader;
+
 
         }
 
@@ -321,7 +326,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 public void onClick(View view) {
                    // dismiss();
                     for(int i=0;i<detailList.size();i++) {
-                        TempMixing model = new TempMixing(0, 0,detailList.get(i).getRmId(),detailList.get(i).getTotal()*detailList.get(i).getMulFactor(),prodPlanHeader.getProductionHeaderId());
+                        TempMixing model = new TempMixing(0, 0,detailList.get(i).getRmId(),detailList.get(i).getTotal(),prodPlanHeader.getProductionHeaderId());
                         tempMixingDetailList.add(model);
                     }
 
@@ -329,7 +334,6 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
 
                 }
             });
-
 
                 mAdapter = new ProductionMixingDetailAdapter(detailList,context);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
@@ -348,10 +352,10 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
              commonDialog1 = new CommonDialog(context, "Loading", "Please Wait...");
             commonDialog1.show();
 
-            Call<TempMixing> listCall = Constants.myInterface.insertTempMixing(tempMixing);
-            listCall.enqueue(new Callback<TempMixing>() {
+            Call<Info> listCall = Constants.myInterface.insertTempMixing(tempMixing);
+            listCall.enqueue(new Callback<Info>() {
                 @Override
-                public void onResponse(Call<TempMixing> call, Response<TempMixing> response) {
+                public void onResponse(Call<Info> call, Response<Info> response) {
                     try {
                         if (response.body() != null) {
 
@@ -400,7 +404,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 }
 
                 @Override
-                public void onFailure(Call<TempMixing> call, Throwable t) {
+                public void onFailure(Call<Info> call, Throwable t) {
                     commonDialog1.dismiss();
                     Log.e("onFailure : ", "-----------" + t.getMessage());
                     t.printStackTrace();
@@ -425,7 +429,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
         }
     }
 
-    private void getTempMixItemDetail(Integer productionHeaderId, final ProdPlanHeader prodPlanHeader) {
+    private void getTempMixItemDetail(final Integer productionHeaderId, final ProdPlanHeader prodPlanHeader) {
         Log.e("PARAMETER","                 PROD HEADER ID     "+productionHeaderId);
         if (Constants.isOnline(context)) {
 //            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
@@ -446,7 +450,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                             {
                                 for(int j=0;j<detailList.size();j++)
                                 {
-                                    if(detailList.get(j).getRmId()==mixDetailList.get(i).getRmId())
+                                    if(detailList.get(j).getRmId().equals(mixDetailList.get(i).getRmId()))
                                     {
                                        detailList.get(j).setTotal(detailList.get(j).getTotal()+mixDetailList.get(i).getTotal());
                                     }
@@ -456,11 +460,11 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
                             for(int i=0;i<detailList.size();i++) {
-                                MixingDetailedSave mixingDetailedSave = new MixingDetailedSave(0, 0,detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getTotal(),detailList.get(i).getTotal(),sdf.format(System.currentTimeMillis()),0,0,0,String.valueOf(detailList.get(i).getMulFactor()),"","",0,detailList.get(i).getUom(),0,detailList.get(i).getPrevtotal(),detailList.get(i).getMulFactor()*detailList.get(i).getPrevtotal());
+                                MixingDetailedSave mixingDetailedSave = new MixingDetailedSave(0, 0,detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getTotal(),detailList.get(i).getTotal(),sdf.format(System.currentTimeMillis()),0, 0,0,String.valueOf(detailList.get(i).getMulFactor()),"","",0,detailList.get(i).getUom(),0,detailList.get(i).getPrevtotal(),detailList.get(i).getMulFactor()*detailList.get(i).getPrevtotal());
                                 mixList.add(mixingDetailedSave);
                             }
 
-                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),0,prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),0,0,0,0,"","","",0,mixList);
+                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),0,deptId,0,0,"","","",0,mixList);
                             saveMixing(mixingHeaderDetail,prodPlanHeader);
                             commonDialog1.dismiss();
 

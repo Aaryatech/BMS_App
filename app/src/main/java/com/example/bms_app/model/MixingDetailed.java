@@ -18,10 +18,10 @@ public class MixingDetailed {
     private String sfName;
     @SerializedName("receivedQty")
     @Expose
-    private Integer receivedQty;
+    private float receivedQty;
     @SerializedName("productionQty")
     @Expose
-    private Integer productionQty;
+    private float productionQty;
     @SerializedName("mixingDate")
     @Expose
     private String mixingDate;
@@ -91,19 +91,19 @@ public class MixingDetailed {
         this.sfName = sfName;
     }
 
-    public Integer getReceivedQty() {
+    public float getReceivedQty() {
         return receivedQty;
     }
 
-    public void setReceivedQty(Integer receivedQty) {
+    public void setReceivedQty(float receivedQty) {
         this.receivedQty = receivedQty;
     }
 
-    public Integer getProductionQty() {
+    public float getProductionQty() {
         return productionQty;
     }
 
-    public void setProductionQty(Integer productionQty) {
+    public void setProductionQty(float productionQty) {
         this.productionQty = productionQty;
     }
 

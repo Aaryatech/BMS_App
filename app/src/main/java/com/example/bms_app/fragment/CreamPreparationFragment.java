@@ -28,9 +28,11 @@ import com.example.bms_app.model.BillOfMaterialHeader;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.DeptDetail;
 import com.example.bms_app.model.FrItemStockConfigure;
-import com.example.bms_app.model.GetTempMixItemDetailList;
+import com.example.bms_app.model.Info;
+import com.example.bms_app.model.Login;
 import com.example.bms_app.model.MixingDetailedSave;
 import com.example.bms_app.model.MixingHeaderDetail;
+import com.example.bms_app.model.PostProductionPlanHeader;
 import com.example.bms_app.model.ProdPlanHeader;
 import com.example.bms_app.model.SfItemDetail;
 import com.example.bms_app.model.SfItemHeader;
@@ -41,8 +43,10 @@ import com.example.bms_app.utils.CommonDialog;
 import com.example.bms_app.utils.CustomSharedPreference;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -72,6 +76,8 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
     int fromId=0,toId=0;
     String fromName,toName;
     List<SfItemDetail> sfItemTempList = new ArrayList<>();
+    Login loginUser;
+    PostProductionPlanHeader postProductionPlanHeader;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,6 +99,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
             prodPlanHeader = gson.fromJson(userStr, ProdPlanHeader.class);
             Log.e("HEDER : ", "--------------------------------------MODEL-----------------------------------" + prodPlanHeader);
 
+
             tvProdNo.setText("Prod Id : "+prodPlanHeader.getProductionHeaderId());
             tvDate.setText("Prod Date : "+prodPlanHeader.getProductionDate());
         }catch (Exception e)
@@ -100,8 +107,25 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
             e.printStackTrace();
         }
 
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("HOME_ACTIVITY : ", "--------USER-------" + loginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         getSettingKey("BMS");
         getSettingValue("PROD");
+
+        try {
+            PostProdPlanHeaderwithDetailed(prodPlanHeader.getProductionHeaderId());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -138,6 +162,53 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
 
         return view;
     }
+
+    private void PostProdPlanHeaderwithDetailed(Integer productionHeaderId) {
+        Log.e("PARAMETER","                 PROD ID     "+productionHeaderId);
+        if (Constants.isOnline(getActivity())) {
+            final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<PostProductionPlanHeader> listCall = Constants.myInterface.PostProdPlanHeaderwithDetailed(productionHeaderId);
+            listCall.enqueue(new Callback<PostProductionPlanHeader>() {
+                @Override
+                public void onResponse(Call<PostProductionPlanHeader> call, Response<PostProductionPlanHeader> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("SETTING RESPONCE BMS: ", " - " + response.body());
+                            // frItemStockConfiguresList.clear();
+                            postProductionPlanHeader=response.body();
+
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                            Toast.makeText(getActivity(), "Unable to process", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        Toast.makeText(getActivity(), "Unable to process", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PostProductionPlanHeader> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    Toast.makeText(getActivity(), "Unable to process", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void getSettingKey(String dept) {
         Log.e("PARAMETER","                 SETTING KEY VALUES     "+dept);
@@ -220,9 +291,9 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                             for(int i=0;i<detailList.size();i++)
                             {
                                 detailList.get(i).setChecked(false);
-                                detailList.get(i).setEditTotal(detailList.get(i).getTotal());
-                            }
+                                detailList.get(i).setEditTotal(detailList.get(i).getTotal()/1000);
 
+                            }
                             adapter = new CreamPreparationAdapter(detailList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
@@ -262,6 +333,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
             if(v.getId()==R.id.btnAdd)
             {
+                Log.e("MYTAG", "-----------------------------------DETAIL BIN---------------------"+detailList);
                 for(int i=0;i<detailList.size();i++)
                 {
                     if(detailList.get(i).getChecked())
@@ -271,165 +343,53 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                 }
             }else if(v.getId()==R.id.btnSubmit)
             {
-                for(int i=0;i<detailList.size();i++) {
-                    TempMixing model = new TempMixing(0, 0,detailList.get(i).getRmId(),detailList.get(i).getTotal(),prodPlanHeader.getProductionHeaderId());
-                    tempMixingDetailList.add(model);
+                if (sfItemTempList.size()!=0) {
+                    Log.e("MYTAG", "-----------------------------------NULL---------------------");
+                    billDetailList.clear();
+                    for (int i = 0; i < sfItemTempList.size(); i++) {
+                        Log.e("MYTAG", "-----------------------------------FOR---------------------");
+                        String strData = sfItemTempList.get(i).getRmName();
+                        String[] arrayString = strData.split("#");
+                        String name = arrayString[0];
+                        String unit = arrayString[1];
+                        BillOfMaterialDetailed billOfMaterialDetailed = new BillOfMaterialDetailed(0, 0, sfItemTempList.get(i).getRmType(), sfItemTempList.get(i).getRmId(), name, unit, sfItemTempList.get(i).getRmQty(), sfItemTempList.get(i).getRmQty(), 0, 0, "", "", "", 0, 0, 0, sfItemTempList.get(i).getRmQty(), 0, 0);
+                        billDetailList.add(billOfMaterialDetailed);
+                    }
+
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+                    // SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+                    SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+                    Date FromDate = null;
+                    try {
+                        FromDate = formatter1.parse(prodPlanHeader.getProductionDate());//catch exception
+                    } catch (ParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    String prodDate = sdf1.format(FromDate);
+                    Log.e("MYTAG", "-----------------------------------DATE------------------------" + prodDate);
+                    Log.e("MYTAG", "-----------------------------------PROD ID------------------------" + prodPlanHeader.getProductionHeaderId());
+
+                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(), prodDate, 1, toId, toName, toId, toName, loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), 4, 0, 0, prodPlanHeader.getCatId(), 0, "", "", prodPlanHeader.getIsPlanned(), 0, 0, sdf.format(System.currentTimeMillis()), 0, sdf.format(System.currentTimeMillis()), billDetailList);
+                    saveDetail(billOfMaterialHeader, prodPlanHeader);
+                }else {
+                    Toast.makeText(getActivity(), "Please add item first....", Toast.LENGTH_SHORT).show();
                 }
 
-                saveTempMixing(tempMixingDetailList,prodPlanHeader);
+//                for(int i=0;i<detailList.size();i++) {
+//                    TempMixing model = new TempMixing(0, 0,detailList.get(i).getRmId(),detailList.get(i).getTotal(),prodPlanHeader.getProductionHeaderId());
+//                    tempMixingDetailList.add(model);
+//                }
+//
+             //  saveTempMixing(tempMixingDetailList,prodPlanHeader);
             }
     }
 
 
-    private void saveTempMixing(ArrayList<TempMixing> tempMixing, final ProdPlanHeader prodPlanHeader) {
-        Log.e("PARAMETER","---------------------------------------MIXING TEMP--------------------------"+tempMixing);
-
-        if (Constants.isOnline(getActivity())) {
-            commonDialog1 = new CommonDialog(getActivity(), "Loading", "Please Wait...");
-            commonDialog1.show();
-
-            Call<TempMixing> listCall = Constants.myInterface.insertTempMixing(tempMixing);
-            listCall.enqueue(new Callback<TempMixing>() {
-                @Override
-                public void onResponse(Call<TempMixing> call, Response<TempMixing> response) {
-                    try {
-                        if (response.body() != null) {
-
-                            Log.e("SAVE : ", " ------------------------------SAVE TEMP MIXING------------------------ " + response.body());
-                            getTempMixItemDetail(prodPlanHeader.getProductionHeaderId(),prodPlanHeader);
-
-                            commonDialog1.dismiss();
-
-                        } else {
-                            commonDialog1.dismiss();
-                            Log.e("Data Null : ", "-----------");
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                            builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
-                            builder.setMessage("Unable to process! please try again.");
-
-                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-
-                        }
-                    } catch (Exception e) {
-                        commonDialog1.dismiss();
-                        Log.e("Exception : ", "-----------" + e.getMessage());
-                        e.printStackTrace();
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                        builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
-                        builder.setMessage("Unable to process! please try again.");
-
-                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<TempMixing> call, Throwable t) {
-                    commonDialog1.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    t.printStackTrace();
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                    builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
-                    builder.setMessage("Unable to process! please try again.");
-
-                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-
-                }
-            });
-        } else {
-            Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void getTempMixItemDetail(Integer productionHeaderId, final ProdPlanHeader prodPlanHeader) {
-        Log.e("PARAMETER","                 PROD HEADER ID     "+productionHeaderId);
-        if (Constants.isOnline(getActivity())) {
-//            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-//            commonDialog.show();
-
-            Call<GetTempMixItemDetailList> listCall = Constants.myInterface.getTempMixItemDetail(productionHeaderId);
-            listCall.enqueue(new Callback<GetTempMixItemDetailList>() {
-                @Override
-                public void onResponse(Call<GetTempMixItemDetailList> call, Response<GetTempMixItemDetailList> response) {
-                    try {
-                        if (response.body() != null) {
-
-                            Log.e("MIXING DETAIL: ", " - " + response.body());
-                            mixDetailList.clear();
-                            mixDetailList=response.body().getTempMixItemDetail();
-
-                            for(int i=0;i<mixDetailList.size();i++)
-                            {
-                                for(int j=0;j<detailList.size();j++)
-                                {
-                                    if(detailList.get(j).getRmId()==mixDetailList.get(i).getRmId())
-                                    {
-                                        detailList.get(j).setTotal(detailList.get(j).getTotal()+mixDetailList.get(i).getTotal());
-                                    }
-                                }
-
-                            }
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                            for(int i=0;i<detailList.size();i++) {
-                                MixingDetailedSave mixingDetailedSave = new MixingDetailedSave(0, 0,detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getTotal(),detailList.get(i).getTotal(),sdf.format(System.currentTimeMillis()),0,0,0,"","","",0,detailList.get(i).getUom(),0,detailList.get(i).getTotal(),detailList.get(i).getEditTotal());
-                                mixList.add(mixingDetailedSave);
-                            }
-
-                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),0,prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),0,0,0,0,"","","",0,mixList);
-                            saveMixing(mixingHeaderDetail,prodPlanHeader);
-                            commonDialog1.dismiss();
-
-                        } else {
-                            commonDialog1.dismiss();
-                            Log.e("Data Null : ", "-----------");
-                            Toast.makeText(getActivity(), "Unable to process", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        commonDialog1.dismiss();
-                        Log.e("Exception Detail  : ", "-----------" + e.getMessage());
-                        Toast.makeText(getActivity(), "Unable to process", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<GetTempMixItemDetailList> call, Throwable t) {
-                    commonDialog1.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    Toast.makeText(getActivity(), "Unable to process", Toast.LENGTH_SHORT).show();
-                    t.printStackTrace();
-                }
-            });
-        } else {
-            Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
     private void saveMixing(MixingHeaderDetail mixingHeaderDetail, final ProdPlanHeader prodPlanHeader) {
         Log.e("PARAMETER","---------------------------------------MIXING SAVE--------------------------"+mixingHeaderDetail);
@@ -445,10 +405,10 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                     try {
                         if (response.body() != null) {
 
-                            Log.e("SAVE : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
-                            for(int i=0;i<frItemStockConfiguresList.size();i++) {
-                                getupdateisMixingandBom(prodPlanHeader.getProductionHeaderId(),0,frItemStockConfiguresList.get(i).getSettingValue());
-                            }
+                            Log.e("SAVE MIXING : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new CreamPreparationFragment(), "MainFragment");
+                            ft.commit();
                             commonDialog1.dismiss();
 
                         } else {
@@ -516,33 +476,35 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    private void getupdateisMixingandBom(Integer productionHeaderId, int flag, Integer dept) {
-        Log.e("PARAMETER","                 PROD HEADER ID     "+productionHeaderId+"      FLAG      "+flag+"          DEPT            "+dept);
-        if (Constants.isOnline(getActivity())) {
-//            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-//            commonDialog.show();
 
-            Call<Integer> listCall = Constants.myInterface.updateisMixingandBom(productionHeaderId,flag,dept);
-            listCall.enqueue(new Callback<Integer>() {
+    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader, final ProdPlanHeader prodPlanHeader) {
+        Log.e("PARAMETER","---------------------------------------PRODUCTION MATERIAL HEADER--------------------------"+billOfMaterialHeader+"           PROD ID       "+prodPlanHeader);
+
+        if (Constants.isOnline(getActivity())) {
+             commonDialog1 = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+            commonDialog1.show();
+
+            Call<Info> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
+            listCall.enqueue(new Callback<Info>() {
                 @Override
-                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                public void onResponse(Call<Info> call, Response<Info> response) {
                     try {
                         if (response.body() != null) {
 
-                            Log.e("UPDATE : ", " ------------------------------UPDATE MIXING------------------------ " + response.body());
-
-                            if (sfItemTempList != null) {
-                                billDetailList.clear();
-                                for (int i = 0; i < sfItemTempList.size(); i++) {
-                                    BillOfMaterialDetailed billOfMaterialDetailed = new BillOfMaterialDetailed(0, 0, sfItemTempList.get(i).getRmType(), sfItemTempList.get(i).getRmId(), sfItemTempList.get(i).getRmName(), "", sfItemTempList.get(i).getRmQty(), 0, 0, 0, "", "", "", 0, 0, 0, sfItemTempList.get(i).getRmQty(), 0, 0);
-                                    billDetailList.add(billOfMaterialDetailed);
+                            Log.e("HEADER BOM : ", " ------------------------------SAVE PRODUCTION HEADER------------------------ " + response.body());
+                            Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                            for(int i=0;i<detailList.size();i++) {
+                                if(detailList.get(i).getChecked())
+                                {
+                                    MixingDetailedSave mixingDetailedSave = new MixingDetailedSave(0, 0,detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getEditTotal(),detailList.get(i).getEditTotal(),sdf.format(System.currentTimeMillis()),0,0,0,""+detailList.get(i).getSingleCut(),"","",0,detailList.get(i).getUom(),0,((detailList.get(i).getTotal()/1000)*detailList.get(i).getSingleCut()),((detailList.get(i).getTotal()/1000)*detailList.get(i).getSingleCut()));
+                                    mixList.add(mixingDetailedSave);
                                 }
+
                             }
-
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                            BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),sdf.format(System.currentTimeMillis()),1,fromId,fromName,toId,toName,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),0,0,0,0,0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
-                            saveDetail(billOfMaterialHeader);
+                            Log.e("MYTAG","-----------------------------------PROD ID MIX------------------------"+prodPlanHeader.getProductionHeaderId());
+                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,postProductionPlanHeader.getTimeSlot(),1,toId,0,0,"","","",0,mixList);
+                            saveMixing(mixingHeaderDetail,prodPlanHeader);
                             commonDialog1.dismiss();
 
                         } else {
@@ -585,93 +547,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                 }
 
                 @Override
-                public void onFailure(Call<Integer> call, Throwable t) {
-                    commonDialog1.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    t.printStackTrace();
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                    builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
-                    builder.setMessage("Unable to process! please try again.");
-
-                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-
-                }
-            });
-        } else {
-            Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader) {
-        Log.e("PARAMETER","---------------------------------------PRODUCTION MATERIAL HEADER--------------------------"+billOfMaterialHeader);
-
-        if (Constants.isOnline(getActivity())) {
-//            final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
-//            commonDialog.show();
-
-            Call<BillOfMaterialHeader> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
-            listCall.enqueue(new Callback<BillOfMaterialHeader>() {
-                @Override
-                public void onResponse(Call<BillOfMaterialHeader> call, Response<BillOfMaterialHeader> response) {
-                    try {
-                        if (response.body() != null) {
-
-                            Log.e("HEADER : ", " ------------------------------SAVE PRODUCTION HEADER------------------------ " + response.body());
-                            Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new BMSListFragment(), "MainFragment");
-                            ft.commit();
-                            commonDialog1.dismiss();
-
-                        } else {
-                            commonDialog1.dismiss();
-                            Log.e("Data Null : ", "-----------");
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                            builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
-                            builder.setMessage("Unable to process! please try again.");
-
-                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-
-                        }
-                    } catch (Exception e) {
-                        commonDialog1.dismiss();
-                        Log.e("Exception : ", "-----------" + e.getMessage());
-                        e.printStackTrace();
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                        builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
-                        builder.setMessage("Unable to process! please try again.");
-
-                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<BillOfMaterialHeader> call, Throwable t) {
+                public void onFailure(Call<Info> call, Throwable t) {
                     commonDialog1.dismiss();
                     Log.e("onFailure : ", "-----------" + t.getMessage());
                     t.printStackTrace();
@@ -754,13 +630,8 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
     }
 
 
-
-
-
-
-
     private void getSfItemDetailsApp(Integer rmId, float editTotal) {
-        Log.e("PARAMETER","                 RM ID     "+rmId  +"               EDITED VALUES           "+editTotal);
+      //  Log.e("PARAMETER","                 RM ID     "+rmId  +"               EDITED VALUES           "+editTotal);
         if (Constants.isOnline(getActivity())) {
             final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
             commonDialog.show();
@@ -772,25 +643,31 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                     try {
                         if (response.body() != null) {
 
-                            Log.e("PRODUCTION : ", " ----------------------SF ITEM DETAIL----------------------- " + response.body());
+                         //   Log.e("PRODUCTION : ", " ----------------------SF ITEM DETAIL----------------------- " + response.body());
                            // sfItemDetailList.clear();
-                            sfItemDetailList.addAll(response.body().getSfItemDetail());
-
-                            Log.e("LIST : ", " ----------------------LIST----------------------- " + sfItemDetailList);
+                             List<SfItemDetail> tempList = new ArrayList<>();
+                            tempList= response.body().getSfItemDetail();
+                           // Log.e("LIST : ", " ----------------------LIST RESPONCE----------------------- " + tempList);
+                            for(int i=0;i<tempList.size();i++){
+                                sfItemDetailList.add(tempList.get(i));
+                            }
+                            //sfItemDetailList.addAll();
+                            sfItemTempList = new ArrayList<>();
 
                              //List<SfItemDetail> sfItemTempList = new ArrayList<>();
                              for(int j=0;j<sfItemDetailList.size();j++)
                                 {
-                                    Log.e("LIST : ", " ----------------------SIZE----------------------- " + sfItemDetailList.size());
+                                  //  Log.e("LIST : ", " ----------------------SIZE----------------------- " + sfItemDetailList.size());
 
                                     int flag=0;
+
                                    for(int k=0;k<sfItemTempList.size();k++)
                                    {
                                        if(sfItemDetailList.get(j).getRmId()==sfItemTempList.get(k).getRmId() && sfItemDetailList.get(j).getRmType()==sfItemTempList.get(k).getRmType())
                                        {
-                                           Log.e("LIST : ", " ----------------------EQUAL----------------------- ");
+                                         //  Log.e("LIST : ", " ----------------------EQUAL----------------------- ");
                                            sfItemTempList.get(k).setRmQty(sfItemTempList.get(k).getRmQty()+sfItemDetailList.get(j).getRmQty());
-                                           Log.e("LIST : ", " ----------------------TOTAL----------------------- "+sfItemTempList.get(k).getRmQty());
+                                         //  Log.e("LIST : ", " ----------------------TOTAL----------------------- "+sfItemTempList.get(k).getRmQty());
                                            flag=1;
                                             break;
 
@@ -798,12 +675,19 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                                    }
                                    if(flag==0)
                                    {
+                                       //sfItemTempList.clear();
                                        SfItemDetail sfItemDetail=sfItemDetailList.get(j);
+                                      // SfItemDetail sfItemDetail=new SfItemDetail(sfItemDetailList.get(j).getSfDid(),sfItemDetailList.get(j).getSfId(),sfItemDetailList.get(j).getRmType(),sfItemDetailList.get(j).getRmId(),sfItemDetailList.get(j).getRmName(),sfItemDetailList.get(j).getRmQty()/1000,sfItemDetailList.get(j).getRmUnit(),sfItemDetailList.get(j).getRmWeight(),sfItemDetailList.get(j).getDelStatus());
                                        sfItemTempList.add(sfItemDetail);
+                                      // Log.e("DATA 1: ", "--------------------------DATA 1---------------------------"+sfItemTempList);
                                    }
                                 }
 
+                            Log.e("LIST : ", " ----------------------LIST ----------------------- " + sfItemDetailList);
+                            Log.e("LIST : ", " ----------------------LIST TEMP----------------------- " + sfItemTempList);
 
+
+                            // Log.e("DATA : ", "--------------------------DATA---------------------------"+sfItemTempList);
                             adapter1 = new CreamPreparationDetailAdapter(sfItemTempList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerViewDetail.setLayoutManager(mLayoutManager);
@@ -813,7 +697,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
 
                         } else {
                             commonDialog.dismiss();
-                            Log.e("Data Null : ", "-----------");
+                           // Log.e("Data Null : ", "-----------");
                             Toast.makeText(getActivity(), "Unable to process", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {

@@ -10,18 +10,37 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_heading"
+
+        <LinearLayout
+            android:id="@+id/llHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/sf_ui_bold"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="Request for BOM Detail"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp" />
+            android:layout_alignParentTop="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/sf_ui_bold"
+                android:padding="5dp"
+                android:layout_weight="1"
+                android:text="Request for BOM Detail"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/ivClose"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_close" />
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -100,10 +119,12 @@
                 android:id="@+id/btnCancel"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@color/colorPrimary"
                 android:fontFamily="@font/sf_ui_bold"
+                android:background="@drawable/rounded_corner_button"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
                 android:text="Cancel"
                 android:textColor="@color/colorWhite" />
 
@@ -111,11 +132,27 @@
                 android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@color/colorPrimary"
+                android:fontFamily="@font/sf_ui_bold"
+                android:background="@drawable/rounded_corner_button"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:text="Approve"
+                android:textColor="@color/colorWhite" />
+
+
+            <Button
+                android:id="@+id/btnAppReject"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:fontFamily="@font/sf_ui_bold"
                 android:layout_marginLeft="8dp"
+                android:background="@drawable/rounded_corner_button"
                 android:layout_weight="1"
-                android:text="Approve"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
+                android:text="Approve Rejected"
                 android:textColor="@color/colorWhite" />
 
         </LinearLayout>

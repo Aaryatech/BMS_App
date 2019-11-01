@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,14 +19,18 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bms_app.R;
+import com.example.bms_app.activity.MainActivity;
 import com.example.bms_app.constants.Constants;
+import com.example.bms_app.fragment.ShowRequestBOMFragment;
 import com.example.bms_app.model.BillOfAllMaterialHeader;
 import com.example.bms_app.model.BillOfMaterialDetailed;
 import com.example.bms_app.model.BillOfMaterialHeader;
+import com.example.bms_app.model.Info;
 import com.example.bms_app.utils.CommonDialog;
 
 import java.text.SimpleDateFormat;
@@ -115,8 +120,9 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
     }
 
     private class DeptDialog extends Dialog {
-        public Button btnCancel,btnSubmit;
+        public Button btnCancel,btnSubmit,btnAppReject;
         public RecyclerView recyclerView;
+        public ImageView ivClose;
         private AllBomRequestAdapter mAdapter;
         private List<BillOfMaterialDetailed> detailList = new ArrayList<>();
         //ProdPlanHeader prodDetail;
@@ -149,11 +155,35 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
             window.setAttributes(wlp);
 
             btnSubmit = (Button) findViewById(R.id.btnSubmit);
+            ivClose = (ImageView) findViewById(R.id.ivClose);
+            btnAppReject = (Button) findViewById(R.id.btnAppReject);
             btnCancel = (Button) findViewById(R.id.btnCancel);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
+            if(billOfAllMaterialHeader.getStatus()==0)
+            {
+                btnSubmit.setVisibility(View.VISIBLE);
+                btnAppReject.setVisibility(View.GONE);
+            }else if(billOfAllMaterialHeader.getStatus()==2)
+            {
+                btnSubmit.setVisibility(View.GONE);
+                btnAppReject.setVisibility(View.VISIBLE);
+            }else if(billOfAllMaterialHeader.getStatus()==1 || billOfAllMaterialHeader.getStatus()==3 || billOfAllMaterialHeader.getStatus()==4)
+            {
+                btnSubmit.setVisibility(View.GONE);
+                btnAppReject.setVisibility(View.VISIBLE);
+                btnAppReject.setClickable(false);
+            }
+
 
             btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+            ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     dismiss();
@@ -166,8 +196,9 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
                     dismiss();
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 
-                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, billOfAllMaterialHeader.getProductionId(),billOfAllMaterialHeader.getProductionDate(),1,billOfAllMaterialHeader.getFromDeptId(),billOfAllMaterialHeader.getFromDeptName(),billOfAllMaterialHeader.getToDeptId(),billOfAllMaterialHeader.getToDeptName(),0,billOfAllMaterialHeader.getReqDate(),0,sdf.format(System.currentTimeMillis()),1,0,0,0,0,"","",billOfAllMaterialHeader.getIsPlan(),0,0,billOfAllMaterialHeader.getRejDate(),0,billOfAllMaterialHeader.getRejApproveDate(),detailList);
+                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(billOfAllMaterialHeader.getReqId(), billOfAllMaterialHeader.getProductionId(),billOfAllMaterialHeader.getProductionDate(),billOfAllMaterialHeader.getIsProduction(),billOfAllMaterialHeader.getFromDeptId(),billOfAllMaterialHeader.getFromDeptName(),billOfAllMaterialHeader.getToDeptId(),billOfAllMaterialHeader.getToDeptName(),0,billOfAllMaterialHeader.getReqDate(),billOfAllMaterialHeader.getApprovedUserId(),sdf1.format(System.currentTimeMillis()),1,billOfAllMaterialHeader.getExBool1(),billOfAllMaterialHeader.getDelStatus(),billOfAllMaterialHeader.getExInt1(),billOfAllMaterialHeader.getExInt2(),"","",billOfAllMaterialHeader.getIsPlan(),billOfAllMaterialHeader.getIsManual(),billOfAllMaterialHeader.getRejUserId(),billOfAllMaterialHeader.getRejDate(),billOfAllMaterialHeader.getRejApproveUserId(),billOfAllMaterialHeader.getRejApproveDate(),detailList);
                     saveDetail(billOfMaterialHeader);
 
                 }
@@ -197,16 +228,19 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
             final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
             commonDialog.show();
 
-            Call<BillOfMaterialHeader> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
-            listCall.enqueue(new Callback<BillOfMaterialHeader>() {
+            Call<Info> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
+            listCall.enqueue(new Callback<Info>() {
                 @Override
-                public void onResponse(Call<BillOfMaterialHeader> call, Response<BillOfMaterialHeader> response) {
+                public void onResponse(Call<Info> call, Response<Info> response) {
                     try {
                         if (response.body() != null) {
 
                             Log.e("HEADER : ", " ------------------------------SAVE REQUEST BOM------------------------ " + response.body());
                             Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
-
+                            MainActivity activity=(MainActivity)context;
+                            FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new ShowRequestBOMFragment(), "MainFragment");
+                            ft.commit();
 
                             commonDialog.dismiss();
 
@@ -250,7 +284,7 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
                 }
 
                 @Override
-                public void onFailure(Call<BillOfMaterialHeader> call, Throwable t) {
+                public void onFailure(Call<Info> call, Throwable t) {
                     commonDialog.dismiss();
                     Log.e("onFailure : ", "-----------" + t.getMessage());
                     t.printStackTrace();

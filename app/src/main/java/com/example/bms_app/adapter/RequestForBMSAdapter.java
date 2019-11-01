@@ -21,6 +21,7 @@ public class RequestForBMSAdapter extends RecyclerView.Adapter<RequestForBMSAdap
     private List<ProdPlanHeader> reqMixingList;
     private Context context;
     public int mSelectedItem = -1;
+    private boolean onBind;
 
 
     public RequestForBMSAdapter(List<ProdPlanHeader> reqMixingList, Context context) {
@@ -38,12 +39,14 @@ public class RequestForBMSAdapter extends RecyclerView.Adapter<RequestForBMSAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RequestForBMSAdapter.MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final RequestForBMSAdapter.MyViewHolder myViewHolder, final int i) {
         final ProdPlanHeader model=reqMixingList.get(i);
         final int pos = i;
         myViewHolder.tvProductId.setText(""+model.getProductionHeaderId());
         myViewHolder.tvDate.setText(model.getProductionDate());
       //  myViewHolder.rbSelect.setChecked(i == mSelectedItem);
+
+
 
         if(model.getIsPlanned()==1) {
             myViewHolder.tvIsPlane.setText("Yes");
@@ -67,31 +70,36 @@ public class RequestForBMSAdapter extends RecyclerView.Adapter<RequestForBMSAdap
         {
             myViewHolder.tvStatus.setText("Closed");
         }
-
+        onBind = true;
         if(model.getChecked())
         {
             myViewHolder.rbSelect.setChecked(true);
         }else{
             myViewHolder.rbSelect.setChecked(false);
         }
-
+        onBind = false;
         myViewHolder.rbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(isChecked)
-                {
-                    model.setChecked(true);
-                    for(int  i=0;i<reqMixingList.size();i++)
-                    {
-                        if(reqMixingList.get(i).getProductionHeaderId()!=model.getProductionHeaderId())
-                        {
-                            reqMixingList.get(i).setChecked(false);
-                        }
+                if (!onBind) {
 
+                    if (isChecked) {
+                        //model.setChecked(true);
+                        model.setChecked(true);
+
+                        for (int i = 0; i < reqMixingList.size(); i++) {
+                            Log.e("For", "-------------------------------------------");
+                            if (reqMixingList.get(i).getProductionHeaderId() != model.getProductionHeaderId()) {
+                                Log.e("Equal", "-------------------------------------------");
+                                reqMixingList.get(i).setChecked(false);
+                            }
+
+                        }
+                        notifyDataSetChanged();
+
+                        Log.e("RADIO", "------------------------------model-----------------------------" + model);
                     }
-                    notifyDataSetChanged();
-                    Log.e("RADIO","------------------------------model-----------------------------"+model);
                 }
             }
         });

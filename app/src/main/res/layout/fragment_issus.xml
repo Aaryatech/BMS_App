@@ -46,6 +46,37 @@
 
             </LinearLayout>
 
+            <RadioGroup
+                android:id="@+id/rgType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <RadioButton
+                    android:id="@+id/rbIssue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:fontFamily="@font/sf_ui_regular"
+                    android:text="Issue" />
+
+                <RadioButton
+                    android:id="@+id/rbManual"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sf_ui_regular"
+                    android:text="Manual" />
+
+            </RadioGroup>
+
 
             <TextView
                 android:layout_width="wrap_content"

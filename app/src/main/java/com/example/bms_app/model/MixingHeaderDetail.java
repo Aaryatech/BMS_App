@@ -5,7 +5,7 @@ import java.util.List;
 public class MixingHeaderDetail {
     private int mixId;
     private String mixDate;
-    private int ProductionId;
+    private int productionId;
     private String productionBatch;
     private int status;
     private int delStatus;
@@ -23,7 +23,7 @@ public class MixingHeaderDetail {
     public MixingHeaderDetail(int mixId, String mixDate, int productionId, String productionBatch, int status, int delStatus, int timeSlot, int isBom, int exInt1, int exInt2, int exInt3, String exVarchar1, String exVarchar2, String exVarchar3, int exBool1, List<MixingDetailedSave> mixingDetailed) {
         this.mixId = mixId;
         this.mixDate = mixDate;
-        ProductionId = productionId;
+        this.productionId = productionId;
         this.productionBatch = productionBatch;
         this.status = status;
         this.delStatus = delStatus;
@@ -56,11 +56,11 @@ public class MixingHeaderDetail {
     }
 
     public int getProductionId() {
-        return ProductionId;
+        return productionId;
     }
 
     public void setProductionId(int productionId) {
-        ProductionId = productionId;
+        productionId = productionId;
     }
 
     public String getProductionBatch() {
@@ -172,7 +172,7 @@ public class MixingHeaderDetail {
         return "MixingHeaderDetail{" +
                 "mixId=" + mixId +
                 ", mixDate='" + mixDate + '\'' +
-                ", ProductionId=" + ProductionId +
+                ", ProductionId=" + productionId +
                 ", productionBatch='" + productionBatch + '\'' +
                 ", status=" + status +
                 ", delStatus=" + delStatus +

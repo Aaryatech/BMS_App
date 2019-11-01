@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Constants {
 
-     //public static final String BASE_URL ="http://192.168.43.200:8094/";
+  //  public static final String BASE_URL ="http://192.168.43.200:8094/";
    public static final String BASE_URL = "http://132.148.151.41:8080/webapi/";
 
     public static final String IMAGE_URL = "http://132.148.151.41:8080/uploads/APP/";

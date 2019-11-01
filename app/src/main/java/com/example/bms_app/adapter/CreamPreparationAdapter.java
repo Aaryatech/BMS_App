@@ -49,23 +49,27 @@ public class CreamPreparationAdapter extends RecyclerView.Adapter<CreamPreparati
 
         Log.e("Decimal","--------------------------------------------------"+model.getTotal()/1000);
         Log.e("Model","--------------------------------------------------"+model.getDoubleCut());
+        Log.e("Model list","--------------------------------------------------"+cpList);
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("rm");
+            myViewHolder.tvType.setText("RM");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("sf");
+            myViewHolder.tvType.setText("SF");
         }
 
         if(model.getDoubleCut()==1.0)
         {
-            Log.e("False","---------------------------------");
-            myViewHolder.checkBox1.setEnabled(false);
+            Log.e("False","---------------------------------"+model.getDoubleCut());
+            //myViewHolder.checkBox1.setEnabled(false);
+            myViewHolder.checkBox1.setVisibility(View.INVISIBLE);
+            model.setChecked(false);
         }else if(model.getDoubleCut()==0.0)
         {
-            Log.e("True","---------------------------------");
-            myViewHolder.checkBox1.setEnabled(true);
+            Log.e("True","---------------------------------"+model.getDoubleCut());
+           // myViewHolder.checkBox1.setEnabled(true);
+            myViewHolder.checkBox1.setVisibility(View.VISIBLE);
         }
 
         myViewHolder.checkBox1.setChecked(cpList.get(i).getChecked());

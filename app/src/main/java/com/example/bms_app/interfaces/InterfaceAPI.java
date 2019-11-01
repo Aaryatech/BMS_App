@@ -5,12 +5,14 @@ import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.DeptDetail;
 import com.example.bms_app.model.GetTempMixItemDetailList;
 import com.example.bms_app.model.Group;
+import com.example.bms_app.model.Info;
 import com.example.bms_app.model.Item;
 import com.example.bms_app.model.Login;
 import com.example.bms_app.model.MixingDetail;
 import com.example.bms_app.model.MixingDetailList;
 import com.example.bms_app.model.MixingHeader;
 import com.example.bms_app.model.MixingHeaderDetail;
+import com.example.bms_app.model.PostProductionPlanHeader;
 import com.example.bms_app.model.Production;
 import com.example.bms_app.model.ProductionDetail;
 import com.example.bms_app.model.SfItemHeader;
@@ -38,7 +40,7 @@ public interface InterfaceAPI {
     Call<DeptDetail> getSfPlanDetailForBom(@Query("headerId") int headerId, @Query("deptId") int deptId);
 
     @POST("saveBom")
-    Call<BillOfMaterialHeader> saveBom(@Body BillOfMaterialHeader billOfMaterialHeader);
+    Call<Info> saveBom(@Body BillOfMaterialHeader billOfMaterialHeader);
 
     @POST("getBOMHeaderBmsAndStore")
     Call<ShowAllReq> getBOMHeaderBmsAndStore(@Query("fromDept") int fromDate, @Query("toDept") int toDate, @Query("status") ArrayList<Integer> status);
@@ -59,7 +61,7 @@ public interface InterfaceAPI {
     Call<MixingDetailList> getDetailedwithMixId(@Query("mixId") int mixId);
 
     @POST("insertTempMixing")
-    Call<TempMixing> insertTempMixing(@Body ArrayList<TempMixing> tempMixing);
+    Call<Info> insertTempMixing(@Body ArrayList<TempMixing> tempMixing);
 
     @POST("getTempMixItemDetail")
     Call<GetTempMixItemDetailList> getTempMixItemDetail(@Query("prodHeaderId") int prodHeaderId);
@@ -103,4 +105,15 @@ public interface InterfaceAPI {
     @GET("login")
     Call<Login> login(@Query("username") String username,@Query("password") String password);
 
+    @POST("PostProdPlanHeaderwithDetailed")
+    Call<PostProductionPlanHeader> PostProdPlanHeaderwithDetailed(@Query("planHeaderId") int planHeaderId);
+
+    @POST("showDetailItemLayering")
+    Call<DeptDetail> showDetailItemLayering(@Query("headerId") int headerId, @Query("rmId") int rmId,@Query("deptId") int deptId);
+
+    @POST("getBOMHeaderListBmsAndStore")
+    Call<ShowAllReq> getBOMHeaderListBmsAndStore(@Query("frmdate") String frmdate, @Query("todate") String todate, @Query("fromDept") int fromDept, @Query("toDept") int toDept);
+
+    @POST("getBOMHeaderList")
+    Call<ShowAllReq> getBOMHeaderList(@Query("frmdate") String frmdate, @Query("todate") String todate, @Query("bmsDeptId") int bmsDeptId, @Query("mixDeptId") int mixDeptId);
 }

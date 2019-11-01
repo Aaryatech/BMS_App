@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -65,6 +68,10 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
     String tagStr;
     ProdPlanHeader prodPlanHeader;
 
+    private Animation fab_open, fab_close;
+    TextView tv_fab1, tv_fab2,tv_fab3,tv_fab4,tv_fab5;
+    Boolean isOpen = false;
+
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
 
@@ -76,8 +83,181 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
         View view= inflater.inflate(R.layout.fragment_bmslist, container, false);
         getActivity().setTitle("BMS List");
         recyclerView = view.findViewById(R.id.recyclerView);
-        fab = view.findViewById(R.id.fab);
         btnSetProduction = view.findViewById(R.id.btnSetProduction);
+
+        tv_fab1 = (TextView) view.findViewById(R.id.tv_fab1);
+        tv_fab2 = (TextView) view.findViewById(R.id.tv_fab2);
+        tv_fab3 = (TextView) view.findViewById(R.id.tv_fab3);
+        tv_fab4 = (TextView) view.findViewById(R.id.tv_fab4);
+        tv_fab5 = (TextView) view.findViewById(R.id.tv_fab5);
+
+        fab_close = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_close);
+        fab_open = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_open);
+
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isOpen) {
+
+                    tv_fab1.startAnimation(fab_close);
+                    tv_fab2.startAnimation(fab_close);
+                    tv_fab3.startAnimation(fab_close);
+                    tv_fab4.startAnimation(fab_close);
+                    tv_fab5.startAnimation(fab_close);
+                    tv_fab1.setClickable(false);
+                    tv_fab2.setClickable(false);
+                    tv_fab3.setClickable(false);
+                    tv_fab4.setClickable(false);
+                    tv_fab5.setClickable(false);
+
+                    isOpen = false;
+
+                } else {
+
+                    tv_fab1.startAnimation(fab_open);
+                    tv_fab2.startAnimation(fab_open);
+                    tv_fab3.startAnimation(fab_open);
+                    tv_fab4.startAnimation(fab_open);
+                    tv_fab5.startAnimation(fab_open);
+                    tv_fab1.setClickable(true);
+                    tv_fab2.setClickable(true);
+                    tv_fab3.setClickable(true);
+                    tv_fab4.setClickable(true);
+                    tv_fab5.setClickable(true);
+
+                    isOpen = true;
+                }
+
+            }
+        });
+
+        tv_fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(productionList!=null) {
+                    for (int i = 0; i < productionList.size(); i++) {
+                        if (productionList.get(i).getChecked()) {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(productionList.get(i));
+                            Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                            Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                            CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                           // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new CreamPreparationFragment(), "MainFragment");
+                            ft.commit();
+
+                        }else{
+                            Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        });
+
+        tv_fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(productionList!=null) {
+                    for (int i = 0; i < productionList.size(); i++) {
+                        if (productionList.get(i).getChecked()) {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(productionList.get(i));
+                            Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                            Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                            CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                           // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new CotingCreamFragment(), "MainFragment");
+                            ft.commit();
+
+                        }else{
+                            Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        });
+
+        tv_fab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < productionList.size(); i++) {
+                    if (productionList.get(i).getChecked()) {
+                        Gson gson = new Gson();
+                        String json = gson.toJson(productionList.get(i));
+                        Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                        Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                        CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                       // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.content_frame, new LayeringCreamFragment(), "MainFragment");
+                        ft.commit();
+
+                    }else{
+                        Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        });
+
+        tv_fab4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < productionList.size(); i++) {
+                    if (productionList.get(i).getChecked()) {
+                        Gson gson = new Gson();
+                        String json = gson.toJson(productionList.get(i));
+                        Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                        Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                        CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                       // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.content_frame, new IssusFragment(), "MainFragment");
+                        ft.commit();
+
+                    }else{
+                        Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        });
+
+        tv_fab5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < productionList.size(); i++) {
+                    if (productionList.get(i).getChecked()) {
+                        Gson gson = new Gson();
+                        String json = gson.toJson(productionList.get(i));
+                        Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                        Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                        CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                       // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.content_frame, new ManualProdFragment(), "MainFragment");
+                        ft.commit();
+
+                    }else{
+                        Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        });
 
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -85,7 +265,6 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
        // sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis())
 
 
-        fab.setOnClickListener(this);
         btnSetProduction.setOnClickListener(this);
         return view;
     }

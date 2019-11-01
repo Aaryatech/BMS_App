@@ -27,12 +27,13 @@ import android.widget.Toast;
 import com.example.bms_app.R;
 import com.example.bms_app.activity.MainActivity;
 import com.example.bms_app.constants.Constants;
-import com.example.bms_app.fragment.BMSListFragment;
+import com.example.bms_app.fragment.CotingCreamFragment;
 import com.example.bms_app.model.BillOfMaterialDetailed;
 import com.example.bms_app.model.BillOfMaterialHeader;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.FrItemStockConfigure;
-import com.example.bms_app.model.GetTempMixItemDetailList;
+import com.example.bms_app.model.Info;
+import com.example.bms_app.model.Login;
 import com.example.bms_app.model.MixingDetailedSave;
 import com.example.bms_app.model.MixingHeaderDetail;
 import com.example.bms_app.model.ProdPlanHeader;
@@ -43,8 +44,10 @@ import com.example.bms_app.model.TempMixItemDetail;
 import com.example.bms_app.model.TempMixing;
 import com.example.bms_app.utils.CommonDialog;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -67,11 +70,13 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
     String fromName,toName;
     CommonDialog commonDialog1;
     List<SfItemDetail> sfItemTempList = new ArrayList<>();
+    Login loginUser;
 
-    public CoatingCreamAdapter(List<SfPlanDetailForMixing> cotingCreamList, Context context,ProdPlanHeader prodPlanHeader) {
+    public CoatingCreamAdapter(List<SfPlanDetailForMixing> cotingCreamList, Context context,ProdPlanHeader prodPlanHeader, Login loginUser) {
         this.cotingCreamList = cotingCreamList;
         this.context = context;
         this.prodPlanHeader = prodPlanHeader;
+        this.loginUser = loginUser;
     }
 
     @NonNull
@@ -94,13 +99,24 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
 
         Log.e("Decimal","--------------------------------------------------"+model.getTotal()/1000);
         Log.e("Model","--------------------------------------------------"+model);
+        Log.e("Model","------------------------DOUBLE CUT--------------------------"+model.getDoubleCut());
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("rm");
+            myViewHolder.tvType.setText("RM");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("sf");
+            myViewHolder.tvType.setText("SF");
+        }
+
+        if(model.getDoubleCut()==1.0)
+        {
+            Log.e("False","---------------------------------"+model.getDoubleCut());
+            myViewHolder.btnBOM.setEnabled(false);
+        }else if(model.getDoubleCut()==0.0)
+        {
+            Log.e("True","---------------------------------"+model.getDoubleCut());
+            myViewHolder.btnBOM.setEnabled(true);
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {
@@ -131,10 +147,61 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
         myViewHolder.btnBOM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSfItemDetailsForCreamPrep(model.getRmId(),model,prodPlanHeader);
+               // getSfItemDetailsForCreamPrep(model.getRmId(),model,prodPlanHeader);
+                getSfItemDetailsApp(model.getRmId(),model.getTotal()/1000,model,prodPlanHeader);
 
             }
         });
+    }
+
+    private void getSfItemDetailsApp(Integer rmId, float prodQty, final SfPlanDetailForMixing model, final ProdPlanHeader prodPlanHeader) {
+
+        Log.e("PARAMETER","                 RM ID     "+rmId  +"               EDITED VALUES           "+prodQty);
+        if (Constants.isOnline(context)) {
+            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<SfItemHeader> listCall = Constants.myInterface.getSfItemDetailsApp(rmId,prodQty);
+            listCall.enqueue(new Callback<SfItemHeader>() {
+                @Override
+                public void onResponse(Call<SfItemHeader> call, Response<SfItemHeader> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("PRODUCTION : ", " ----------------------SF ITEM DETAIL----------------------- " + response.body());
+                            sfItemDetailList.clear();
+                            sfItemDetailList.addAll(response.body().getSfItemDetail());
+
+                            Log.e("LIST : ", " ----------------------LIST----------------------- " + sfItemDetailList);
+
+                            new DeptDialog(context,model,sfItemDetailList,prodPlanHeader).show();
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                            Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception Detail  : ", "-----------" + e.getMessage());
+                        Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SfItemHeader> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void getSfItemDetailsForCreamPrep(Integer rmId, final SfPlanDetailForMixing model, final ProdPlanHeader prodPlanHeader) {
@@ -235,7 +302,7 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
     }
 
     private class DeptDialog extends Dialog {
-        public Button btnSubmit;
+        public Button btnSubmit,btnClose;
         public RecyclerView recyclerView;
         SfPlanDetailForMixing model;
         List<SfItemDetail> sfItemTempList;
@@ -268,22 +335,65 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
             window.setAttributes(wlp);
 
             btnSubmit = (Button) findViewById(R.id.btnSubmit);
+            btnClose = (Button) findViewById(R.id.btnClose);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
             getSettingValue("PROD");
             getSettingKey("BMS");
+
+            btnClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
 
             btnSubmit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     dismiss();
+                    if (sfItemTempList.size()!=0) {
+                       // if (sfItemTempList != null) {
+                            billDetailList.clear();
+                            for (int i = 0; i < sfItemTempList.size(); i++) {
+                                String strData = sfItemTempList.get(i).getRmName();
+                                String[] arrayString = strData.split("#");
+                                String name = arrayString[0];
+                                String unit = arrayString[1];
+                                BillOfMaterialDetailed billOfMaterialDetailed = new BillOfMaterialDetailed(0, 0, sfItemTempList.get(i).getRmType(), sfItemTempList.get(i).getRmId(), name, unit, sfItemTempList.get(i).getRmQty(), sfItemTempList.get(i).getRmQty(), 0, 0, "", "", "", 0, 0, 0, sfItemTempList.get(i).getRmQty(), 0, 0);
+                                billDetailList.add(billOfMaterialDetailed);
+                            }
+                      //  }
 
-                        TempMixing tempMixing = new TempMixing(0, 0, model.getRmId(), model.getTotal(), prodPlanHeader.getProductionHeaderId());
-                        tempMixingDetailList.add(tempMixing);
 
-                    saveTempMixing(tempMixingDetailList, prodPlanHeader);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+                        // SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
+                        SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+                        Date FromDate = null;
+                        try {
+                            FromDate = formatter1.parse(prodPlanHeader.getProductionDate());//catch exception
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        String prodDate = sdf1.format(FromDate);
+                        Log.e("MYTAG", "-----------------------------------DATE------------------------" + prodDate);
+
+
+                        BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(), prodDate, 1, toId, toName, toId, toName, loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), 4, 0, 0, prodPlanHeader.getCatId(), 0, "", "", prodPlanHeader.getIsPlanned(), 0, 0, sdf.format(System.currentTimeMillis()), 0, sdf.format(System.currentTimeMillis()), billDetailList);
+                        saveDetail(billOfMaterialHeader, model);
+
+//                        TempMixing tempMixing = new TempMixing(0, 0, model.getRmId(), model.getTotal(), prodPlanHeader.getProductionHeaderId());
+//                        tempMixingDetailList.add(tempMixing);
+//
+                        //  saveTempMixing(tempMixingDetailList, prodPlanHeader);
+                    }else {
+                        Toast.makeText(context, "Please add item first....", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -296,157 +406,7 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
             }
         }
 
-    private void saveTempMixing(ArrayList<TempMixing> tempMixing, final ProdPlanHeader prodPlanHeader) {
-        Log.e("PARAMETER","---------------------------------------MIXING TEMP--------------------------"+tempMixing);
-
-        if (Constants.isOnline(context)) {
-            commonDialog1 = new CommonDialog(context, "Loading", "Please Wait...");
-            commonDialog1.show();
-
-            Call<TempMixing> listCall = Constants.myInterface.insertTempMixing(tempMixing);
-            listCall.enqueue(new Callback<TempMixing>() {
-                @Override
-                public void onResponse(Call<TempMixing> call, Response<TempMixing> response) {
-                    try {
-                        if (response.body() != null) {
-
-                            Log.e("SAVE : ", " ------------------------------SAVE TEMP MIXING------------------------ " + response.body());
-                            getTempMixItemDetail(prodPlanHeader.getProductionHeaderId(),prodPlanHeader);
-
-                            commonDialog1.dismiss();
-
-                        } else {
-                            commonDialog1.dismiss();
-                            Log.e("Data Null : ", "-----------");
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-                            builder.setTitle("" + context.getResources().getString(R.string.app_name));
-                            builder.setMessage("Unable to process! please try again.");
-
-                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-
-                        }
-                    } catch (Exception e) {
-                        commonDialog1.dismiss();
-                        Log.e("Exception : ", "-----------" + e.getMessage());
-                        e.printStackTrace();
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-                        builder.setTitle("" + context.getResources().getString(R.string.app_name));
-                        builder.setMessage("Unable to process! please try again.");
-
-                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<TempMixing> call, Throwable t) {
-                    commonDialog1.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    t.printStackTrace();
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-                    builder.setTitle("" + context.getResources().getString(R.string.app_name));
-                    builder.setMessage("Unable to process! please try again.");
-
-                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-
-                }
-            });
-        } else {
-            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void getTempMixItemDetail(Integer productionHeaderId, final ProdPlanHeader prodPlanHeader) {
-        Log.e("PARAMETER","                 PROD HEADER ID     "+productionHeaderId);
-        if (Constants.isOnline(context)) {
-//            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-//            commonDialog.show();
-
-            Call<GetTempMixItemDetailList> listCall = Constants.myInterface.getTempMixItemDetail(productionHeaderId);
-            listCall.enqueue(new Callback<GetTempMixItemDetailList>() {
-                @Override
-                public void onResponse(Call<GetTempMixItemDetailList> call, Response<GetTempMixItemDetailList> response) {
-                    try {
-                        if (response.body() != null) {
-
-                            Log.e("MIXING DETAIL: ", " - " + response.body());
-                            mixDetailList.clear();
-                            mixDetailList=response.body().getTempMixItemDetail();
-
-                            for(int i=0;i<mixDetailList.size();i++)
-                            {
-                                for(int j=0;j<cotingCreamList.size();j++)
-                                {
-                                    if(cotingCreamList.get(j).getRmId()==mixDetailList.get(i).getRmId())
-                                    {
-                                        cotingCreamList.get(j).setTotal(cotingCreamList.get(j).getTotal()+mixDetailList.get(i).getTotal());
-                                    }
-                                }
-
-                            }
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                            for(int i=0;i<cotingCreamList.size();i++) {
-                                MixingDetailedSave mixingDetailedSave = new MixingDetailedSave(0, 0,cotingCreamList.get(i).getRmId(),cotingCreamList.get(i).getRmName(),cotingCreamList.get(i).getTotal(),cotingCreamList.get(i).getTotal(),sdf.format(System.currentTimeMillis()),0,0,0,"","","",0,cotingCreamList.get(i).getUom(),0,cotingCreamList.get(i).getTotal(),cotingCreamList.get(i).getEditTotal());
-                                mixList.add(mixingDetailedSave);
-                            }
-
-                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),0,prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),0,0,0,0,"","","",0,mixList);
-                            saveMixing(mixingHeaderDetail,prodPlanHeader);
-                            commonDialog1.dismiss();
-
-                        } else {
-                            commonDialog1.dismiss();
-                            Log.e("Data Null : ", "-----------");
-                            Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        commonDialog1.dismiss();
-                        Log.e("Exception Detail  : ", "-----------" + e.getMessage());
-                        Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<GetTempMixItemDetailList> call, Throwable t) {
-                    commonDialog1.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                    t.printStackTrace();
-                }
-            });
-        } else {
-            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void saveMixing(MixingHeaderDetail mixingHeaderDetail, final ProdPlanHeader prodPlanHeader) {
+        private void saveMixing(MixingHeaderDetail mixingHeaderDetail, final ProdPlanHeader prodPlanHeader) {
         Log.e("PARAMETER","---------------------------------------MIXING SAVE--------------------------"+mixingHeaderDetail);
 
         if (Constants.isOnline(context)) {
@@ -461,9 +421,10 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
                         if (response.body() != null) {
 
                             Log.e("SAVE : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
-                            for(int i=0;i<frItemStockConfiguresList.size();i++) {
-                                getupdateisMixingandBom(prodPlanHeader.getProductionHeaderId(),0,frItemStockConfiguresList.get(i).getSettingValue());
-                            }
+                            MainActivity activity=(MainActivity)context;
+                            FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new CotingCreamFragment(), "MainFragment");
+                            ft.commit();
                             commonDialog1.dismiss();
 
                         } else {
@@ -531,120 +492,36 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
         }
     }
 
-    private void getupdateisMixingandBom(Integer productionHeaderId, int flag, Integer dept) {
-        Log.e("PARAMETER","                 PROD HEADER ID     "+productionHeaderId+"      FLAG      "+flag+"          DEPT            "+dept);
-        if (Constants.isOnline(context)) {
-//            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-//            commonDialog.show();
 
-            Call<Integer> listCall = Constants.myInterface.updateisMixingandBom(productionHeaderId,flag,dept);
-            listCall.enqueue(new Callback<Integer>() {
-                @Override
-                public void onResponse(Call<Integer> call, Response<Integer> response) {
-                    try {
-                        if (response.body() != null) {
 
-                            Log.e("UPDATE : ", " ------------------------------UPDATE MIXING------------------------ " + response.body());
-
-                            if (sfItemTempList != null) {
-                                billDetailList.clear();
-                                for (int i = 0; i < sfItemTempList.size(); i++) {
-                                    BillOfMaterialDetailed billOfMaterialDetailed = new BillOfMaterialDetailed(0, 0, sfItemTempList.get(i).getRmType(), sfItemTempList.get(i).getRmId(), sfItemTempList.get(i).getRmName(), "", sfItemTempList.get(i).getRmQty(), 0, 0, 0, "", "", "", 0, 0, 0, sfItemTempList.get(i).getRmQty(), 0, 0);
-                                    billDetailList.add(billOfMaterialDetailed);
-                                }
-                            }
-
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                            BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),sdf.format(System.currentTimeMillis()),1,fromId,fromName,toId,toName,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),0,0,0,0,0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
-                            saveDetail(billOfMaterialHeader);
-                            commonDialog1.dismiss();
-
-                        } else {
-                            commonDialog1.dismiss();
-                            Log.e("Data Null : ", "-----------");
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-                            builder.setTitle("" + context.getResources().getString(R.string.app_name));
-                            builder.setMessage("Unable to process! please try again.");
-
-                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-
-                        }
-                    } catch (Exception e) {
-                        commonDialog1.dismiss();
-                        Log.e("Exception : ", "-----------" + e.getMessage());
-                        e.printStackTrace();
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-                        builder.setTitle("" + context.getResources().getString(R.string.app_name));
-                        builder.setMessage("Unable to process! please try again.");
-
-                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Integer> call, Throwable t) {
-                    commonDialog1.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    t.printStackTrace();
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-                    builder.setTitle("" + context.getResources().getString(R.string.app_name));
-                    builder.setMessage("Unable to process! please try again.");
-
-                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-
-                }
-            });
-        } else {
-            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader) {
-        Log.e("PARAMETER","---------------------------------------PRODUCTION MATERIAL HEADER--------------------------"+billOfMaterialHeader);
+    private void saveDetail(BillOfMaterialHeader billOfMaterialHeader, final SfPlanDetailForMixing model) {
+        Log.e("PARAMETER","---------------------------------------PRODUCTION MATERIAL HEADER--------------------------"+billOfMaterialHeader+"                     MIXING DETAIL      "+model);
 
         if (Constants.isOnline(context)) {
-//            final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
-//            commonDialog.show();
+            commonDialog1 = new CommonDialog(context, "Loading", "Please Wait...");
+            commonDialog1.show();
 
-            Call<BillOfMaterialHeader> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
-            listCall.enqueue(new Callback<BillOfMaterialHeader>() {
+            Call<Info> listCall = Constants.myInterface.saveBom(billOfMaterialHeader);
+            listCall.enqueue(new Callback<Info>() {
                 @Override
-                public void onResponse(Call<BillOfMaterialHeader> call, Response<BillOfMaterialHeader> response) {
+                public void onResponse(Call<Info> call, Response<Info> response) {
                     try {
                         if (response.body() != null) {
 
                             Log.e("HEADER : ", " ------------------------------SAVE PRODUCTION HEADER------------------------ " + response.body());
-                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+                          //  Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
                             MainActivity activity = (MainActivity) context;
-                            FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new BMSListFragment(), "MainFragment");
-                            ft.commit();
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+                         //   for(int i=0;i<cotingCreamList.size();i++) {
+                                MixingDetailedSave mixingDetailedSave = new MixingDetailedSave(0, 0,model.getRmId(),model.getRmName(),model.getEditTotal(),model.getEditTotal(),sdf.format(System.currentTimeMillis()),0,0,0,""+model.getSingleCut(),"","",0,model.getUom(),0,((model.getTotal()/1000)*model.getSingleCut()),((model.getTotal()/1000)*model.getSingleCut()));
+                                mixList.add(mixingDetailedSave);
+                          //  }
+
+                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),1,toId,0,0,"","","",0,mixList);
+                            saveMixing(mixingHeaderDetail,prodPlanHeader);
+
                             commonDialog1.dismiss();
 
                         } else {
@@ -687,7 +564,7 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
                 }
 
                 @Override
-                public void onFailure(Call<BillOfMaterialHeader> call, Throwable t) {
+                public void onFailure(Call<Info> call, Throwable t) {
                     commonDialog1.dismiss();
                     Log.e("onFailure : ", "-----------" + t.getMessage());
                     t.printStackTrace();

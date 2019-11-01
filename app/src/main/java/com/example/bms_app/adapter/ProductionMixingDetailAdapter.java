@@ -48,7 +48,7 @@ public class ProductionMixingDetailAdapter extends RecyclerView.Adapter<Producti
 
         try {
             model.setPrevtotal(model.getTotal());
-            float editQty = model.getTotal()*model.getMulFactor();
+            float editQty = model.getTotal();
             model.setTotal(editQty);
             Log.e(" PREV TOTAL","------------------------------------------"+model.getPrevtotal());
             Log.e(" TOTAL","------------------------------------------"+model.getTotal());

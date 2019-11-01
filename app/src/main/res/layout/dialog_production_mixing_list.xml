@@ -37,7 +37,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
-                android:text="Sf Name" />
+                android:text="SF Name" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -98,9 +98,11 @@
                 android:id="@+id/btnCancel"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@color/colorPrimary"
                 android:fontFamily="@font/sf_ui_bold"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/rounded_corner_button"
                 android:layout_weight="1"
                 android:text="Cancel"
                 android:textColor="@color/colorWhite" />
@@ -109,8 +111,10 @@
                 android:id="@+id/btnPdf"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@color/colorPrimary"
                 android:fontFamily="@font/sf_ui_bold"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/rounded_corner_button"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:text="PDF"

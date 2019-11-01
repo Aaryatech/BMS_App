@@ -73,7 +73,6 @@ public class Item {
     private Integer shelfLife;
     private boolean isChecked;
 
-
     public Integer getId() {
         return id;
     }
@@ -250,7 +249,7 @@ public class Item {
         this.shelfLife = shelfLife;
     }
 
-    public boolean isChecked() {
+    public boolean getChecked() {
         return isChecked;
     }
 

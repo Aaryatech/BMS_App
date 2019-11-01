@@ -55,12 +55,12 @@ public class AllBomRequestAdapter extends RecyclerView.Adapter<AllBomRequestAdap
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 try {
                     float editQty = Float.parseFloat(charSequence.toString());
-                    model.setRmReqQty(editQty);
+                    model.setRmIssueQty(editQty);
                     Log.e("DETAIL MODEL","------------------------------------------"+model);
 
                 } catch (Exception e) {
                     float qty = 0;
-                    model.setRmReqQty(0);
+                    model.setRmIssueQty(0);
                 }
             }
 

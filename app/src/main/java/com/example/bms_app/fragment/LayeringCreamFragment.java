@@ -19,6 +19,7 @@ import com.example.bms_app.constants.Constants;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.DeptDetail;
 import com.example.bms_app.model.FrItemStockConfigure;
+import com.example.bms_app.model.Login;
 import com.example.bms_app.model.ProdPlanHeader;
 import com.example.bms_app.model.SfPlanDetailForMixing;
 import com.example.bms_app.utils.CommonDialog;
@@ -45,6 +46,7 @@ public class LayeringCreamFragment extends Fragment {
     ProdPlanHeader prodPlanHeader;
     CommonDialog commonDialog;
     LayeringCreamAdapter adapter;
+    Login loginUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +67,16 @@ public class LayeringCreamFragment extends Fragment {
 
             tvProdNo.setText("Prod Id : "+prodPlanHeader.getProductionHeaderId());
             tvDate.setText("Prod Date : "+prodPlanHeader.getProductionDate());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("HOME_ACTIVITY : ", "--------USER-------" + loginUser);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -147,7 +159,7 @@ public class LayeringCreamFragment extends Fragment {
                                 detailList.get(i).setEditTotal(detailList.get(i).getTotal());
                             }
 
-                            adapter = new LayeringCreamAdapter(detailList, getContext());
+                            adapter = new LayeringCreamAdapter(detailList, getContext(),prodPlanHeader,loginUser);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());

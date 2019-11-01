@@ -45,15 +45,15 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssuesAdapter.MyViewHold
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("rm");
+            myViewHolder.tvType.setText("RM");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("sf");
+            myViewHolder.tvType.setText("SF");
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
 

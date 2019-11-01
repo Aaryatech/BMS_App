@@ -20,6 +20,7 @@ import com.example.bms_app.constants.Constants;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.DeptDetail;
 import com.example.bms_app.model.FrItemStockConfigure;
+import com.example.bms_app.model.Login;
 import com.example.bms_app.model.ProdPlanHeader;
 import com.example.bms_app.model.SfItemDetail;
 import com.example.bms_app.model.SfPlanDetailForMixing;
@@ -47,6 +48,7 @@ public class CotingCreamFragment extends Fragment implements View.OnClickListene
     CreamPreparationDetailAdapter adapter1;
     private TextView tvProdNo,tvDate;
     private RecyclerView recyclerView,recyclerViewDetail;
+    Login loginUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,6 +70,16 @@ public class CotingCreamFragment extends Fragment implements View.OnClickListene
 
             tvProdNo.setText("Prod Id : "+prodPlanHeader.getProductionHeaderId());
             tvDate.setText("Prod Date : "+prodPlanHeader.getProductionDate());
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("HOME_ACTIVITY : ", "--------USER-------" + loginUser);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -154,10 +166,10 @@ public class CotingCreamFragment extends Fragment implements View.OnClickListene
                             detailList=response.body().getSfPlanDetailForMixing();
                             for(int i=0;i<detailList.size();i++)
                             {
-                                detailList.get(i).setEditTotal(detailList.get(i).getTotal());
+                                detailList.get(i).setEditTotal(detailList.get(i).getTotal()/1000);
                             }
 
-                            adapter = new CoatingCreamAdapter(detailList, getContext(),prodPlanHeader);
+                            adapter = new CoatingCreamAdapter(detailList, getContext(),prodPlanHeader,loginUser);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());

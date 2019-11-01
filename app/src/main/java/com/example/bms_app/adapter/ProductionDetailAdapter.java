@@ -40,15 +40,15 @@ public class ProductionDetailAdapter extends RecyclerView.Adapter<ProductionDeta
         final BillOfMaterialDetailed model=detailList.get(i);
         myViewHolder.tvItemName.setText(""+model.getRmName());
 
-        myViewHolder.tvQty.setText(""+model.getRmReqQty());
-        myViewHolder.edEditQty.setText(""+model.getRmReqQty());
+        myViewHolder.tvQty.setText(""+model.getAutoRmReqQty());
+        myViewHolder.edEditQty.setText(""+model.getAutoRmReqQty());
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("rm");
+            myViewHolder.tvType.setText("RM");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("sf");
+            myViewHolder.tvType.setText("SF");
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {
@@ -59,21 +59,21 @@ public class ProductionDetailAdapter extends RecyclerView.Adapter<ProductionDeta
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                try {
-                    float editQty = Float.parseFloat(charSequence.toString());
-                    model.setRmReqQty(editQty);
-                    Log.e("DETAIL MODEL","------------------------------------------"+model);
 
-                } catch (Exception e) {
-                    float qty = 0;
-                    model.setRmReqQty(0);
-                }
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
+                    try {
+                        float editQty = Float.parseFloat(editable.toString());
+                        model.setAutoRmReqQty(editQty);
+                        Log.e("DETAIL MODEL","------------------------------------------"+model);
 
-            }
+                    } catch (Exception e) {
+                        float qty = 0;
+                        model.setAutoRmReqQty(0);
+                    }
+                }
+
         });
 
 
