@@ -134,6 +134,9 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
                 myViewHolder.tvStore.setVisibility(View.VISIBLE);
             }
 
+        }else if(model.getIsStoreBom()==1)
+        {
+            myViewHolder.tvStore.setVisibility(View.GONE);
         }
     }
 

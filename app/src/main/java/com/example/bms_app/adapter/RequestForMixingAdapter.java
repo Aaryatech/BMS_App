@@ -137,6 +137,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
 
         if(model.getIsMixing()==0)
         {
+            Log.e("MIXING","----------------------------------------");
             if(model.getProductionStatus().equalsIgnoreCase("5"))
             {
                 myViewHolder.tvMixing.setVisibility(View.GONE);
@@ -144,6 +145,9 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
                 myViewHolder.tvMixing.setVisibility(View.VISIBLE);
             }
 
+        }else if(model.getIsMixing()==1)
+        {
+            myViewHolder.tvMixing.setVisibility(View.GONE);
         }
 //        if(model.getIsStoreBom()==0)
 //        {

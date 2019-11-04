@@ -259,7 +259,6 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         getBMSList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()));
        // sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis())

@@ -1,5 +1,6 @@
 package com.example.bms_app.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -118,12 +120,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
 
         Fragment exit = getSupportFragmentManager().findFragmentByTag("Exit");
         Fragment homeFragment = getSupportFragmentManager().findFragmentByTag("MainFragment");
@@ -156,7 +152,13 @@ public class MainActivity extends AppCompatActivity
                 homeFragment instanceof ShowAllRequestFragment && homeFragment.isVisible() ||
                 homeFragment instanceof ShowRequestBOMFragment && homeFragment.isVisible() ||
                 homeFragment instanceof MixingProductionFragment && homeFragment.isVisible() ||
-                homeFragment instanceof MixingProductionListFragment && homeFragment.isVisible()) {
+                homeFragment instanceof MixingProductionListFragment && homeFragment.isVisible() ||
+                homeFragment instanceof BMSListFragment && homeFragment.isVisible() ||
+                homeFragment instanceof CreamPreparationFragment && homeFragment.isVisible() ||
+                homeFragment instanceof LayeringCreamFragment && homeFragment.isVisible() ||
+                homeFragment instanceof CotingCreamFragment && homeFragment.isVisible() ||
+                homeFragment instanceof IssusFragment && homeFragment.isVisible() ||
+                homeFragment instanceof ManualProdFragment && homeFragment.isVisible()) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, new MainFragment(), "Exit");
             ft.commit();
@@ -174,12 +176,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -289,18 +287,15 @@ public class MainActivity extends AppCompatActivity
             childList.put(menuModel, childModelsList);
         }
 
-//        childModelsList = new ArrayList<>();
-//        menuModel = new MenuModel("Special Cake Department", true, true, "Special Cake Department"); //Menu of Python Tutorials
-//        headerList.add(menuModel);
-//        childModel = new MenuModel("BMS Request", false, false, "BMS Request");
-//        childModelsList.add(childModel);
-//
-//        childModel = new MenuModel("BMS Request List", false, false, "BMS Request List");
-//        childModelsList.add(childModel);
-//
-//        if (menuModel.hasChildren) {
-//            childList.put(menuModel, childModelsList);
-//        }
+        childModelsList = new ArrayList<>();
+        menuModel = new MenuModel("Logout", true, true, "Logout"); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        childModel = new MenuModel("Logout", false, false, "Logout");
+        childModelsList.add(childModel);
+
+        if (menuModel.hasChildren) {
+            childList.put(menuModel, childModelsList);
+        }
     }
 
     private void populateExpandableList() {
@@ -424,6 +419,32 @@ public class MainActivity extends AppCompatActivity
                         args.putString("slugName", model.getUrl());
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
+                    }if(model.getUrl().equalsIgnoreCase("Logout"))
+                    {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+                        builder.setTitle("Logout");
+                        builder.setMessage("Are you sure you want to logout?");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                CustomSharedPreference.deletePreference(MainActivity.this);
+                                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                finish();
+
+
+                            }
+                        });
+                        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
                     }
 
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

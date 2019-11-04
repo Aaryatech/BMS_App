@@ -132,7 +132,6 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.PROD_ID);
             Gson gson = new Gson();
