@@ -125,9 +125,25 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
                 {
                    type=0;
 
+                   /*---------------------Clear Detail List---------------------------  */
+                    getSfDetailsForIssue(0,0,"");
+                    tvItemId.setText("");
+                    tvItem.setText("");
+
+                    /*-----------------------------------------------------------  */
+
+
                 }else if(selectedText.equalsIgnoreCase("Manual"))
                 {
                     type=1;
+
+                    /*---------------------Clear Detail List---------------------------  */
+
+                    getSfDetailsForIssue(0,0,"");
+                    tvItemId.setText("");
+                    tvItem.setText("");
+
+                    /*-----------------------------------------------------------  */
                 }
             }
         });
@@ -140,6 +156,15 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
 
             tvProdNo.setText("Prod Id : "+prodPlanHeader.getProductionHeaderId());
             tvDate.setText("Prod Date : "+prodPlanHeader.getProductionDate());
+
+            if(prodPlanHeader.getProductionStatus().equalsIgnoreCase("5"))
+            {
+                rbIssue.setEnabled(false);
+                rbManual.setChecked(true);
+                rbIssue.setChecked(false);
+            }else{
+                rbIssue.setChecked(true);
+            }
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -167,7 +192,7 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
             e.printStackTrace();
         }
 
-        rbIssue.setChecked(true);
+
         tvGroup.setOnClickListener(this);
         tvItem.setOnClickListener(this);
         btnSerach.setOnClickListener(this);
@@ -391,7 +416,6 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
 
                 }
 
-
                 Log.e("ASSIGN ITEM ID", "---------------------------------" + itemWithoutDuplicates);
                 Log.e("SEARCH LIST", "---------------------------------" + searchList);
 
@@ -426,7 +450,7 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
                         if (response.body() != null) {
 
                             Log.e("HEADER : ", " ------------------------------SAVE ISSUES HEADER------------------------ " + response.body());
-                            Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Issue Added Successfully....", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.content_frame, new MainFragment(), "MainFragment");
                             ft.commit();
@@ -713,6 +737,8 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
 
                     dialog.dismiss();
                     getSfDetailsForIssue(0,0,"");
+                    tvItemId.setText("");
+                    tvItem.setText("");
                     tvGroup.setText(""+model.getMiniCatName());
                     tvGroupId.setText(""+model.getMiniCatId());
                     groupId= Integer.parseInt(tvGroupId.getText().toString());

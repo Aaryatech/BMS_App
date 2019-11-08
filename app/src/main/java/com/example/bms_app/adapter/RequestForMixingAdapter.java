@@ -246,7 +246,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
             if (detailList != null) {
                 billDetailList.clear();
                 for (int i = 0; i < detailList.size(); i++) {
-                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,detailList.get(i).getItemDetailId(),detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getRmQty(),detailList.get(i).getRmQty(),0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
+                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,detailList.get(i).getItemDetailId(),detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getTotal(),0,0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
                     billDetailList.add(billOfMaterialDetailed);
                 }
                 Log.e("Mytag","---------------------------BILL DETAIL-------------------------------"+billDetailList);
@@ -360,6 +360,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
                         if (response.body() != null) {
 
                             Log.e("UPDATE : ", " ------------------------------UPDATE MIXING------------------------ " + response.body());
+                            Toast.makeText(context, "Request Submited successfully....", Toast.LENGTH_SHORT).show();
                             MainActivity activity=(MainActivity)context;
                             FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.content_frame, new RequestForMixingFragment(), "MainFragment");

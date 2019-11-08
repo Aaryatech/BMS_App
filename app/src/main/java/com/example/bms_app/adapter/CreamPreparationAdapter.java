@@ -41,11 +41,13 @@ public class CreamPreparationAdapter extends RecyclerView.Adapter<CreamPreparati
     public void onBindViewHolder(@NonNull CreamPreparationAdapter.MyViewHolder myViewHolder, int i) {
         final SfPlanDetailForMixing model=cpList.get(i);
         final int pos = i;
-        myViewHolder.tvItemName.setText(model.getRmName());
+       // myViewHolder.tvItemName.setText(model.getRmName());
 
         myViewHolder.tvQty.setText(""+model.getTotal()/1000);
-        myViewHolder.edEditQty.setText(""+model.getTotal()/1000);
         myViewHolder.tvUOM.setText(""+model.getUom());
+
+        String editValue = String.format("%.3f", model.getTotal()/1000);
+        myViewHolder.edEditQty.setText(""+editValue);
 
         Log.e("Decimal","--------------------------------------------------"+model.getTotal()/1000);
         Log.e("Model","--------------------------------------------------"+model.getDoubleCut());
@@ -53,10 +55,13 @@ public class CreamPreparationAdapter extends RecyclerView.Adapter<CreamPreparati
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("RM");
+           // myViewHolder.tvType.setText("RM");
+            myViewHolder.tvItemName.setText(model.getRmName()+"(RM)");
+
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("SF");
+            //myViewHolder.tvType.setText("SF");
+            myViewHolder.tvItemName.setText(model.getRmName()+"(SF)");
         }
 
         if(model.getDoubleCut()==1.0)

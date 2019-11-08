@@ -6,6 +6,21 @@
     <dimen name="nav_header_height">136dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="text_large">18sp</dimen>
+    <dimen name="text_medium">15sp</dimen>
+    <dimen name="text_small">12sp</dimen>
+
+    <dimen name="home_gallery_height">220dp</dimen>
+    <dimen name="home_banner_height">170dp</dimen>
+
+    <dimen name="margin_xxx_large">40dp</dimen>
+    <dimen name="margin_xx_large">35dp</dimen>
+    <dimen name="margin_x_large">25dp</dimen>
+    <dimen name="margin_large">20dp</dimen>
+    <dimen name="margin_medium">15dp</dimen>
+    <dimen name="margin_small">10dp</dimen>
+    <dimen name="margin_tiny">5dp</dimen>
+
 
 
 </resources>

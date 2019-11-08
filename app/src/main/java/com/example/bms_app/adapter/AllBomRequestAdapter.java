@@ -41,7 +41,7 @@ public class AllBomRequestAdapter extends RecyclerView.Adapter<AllBomRequestAdap
         myViewHolder.tvName.setText(""+model.getRmName());
         myViewHolder.tvAutoReqQty.setText(""+model.getAutoRmReqQty());
         myViewHolder.tvReqQty.setText(""+model.getRmReqQty());
-        myViewHolder.edIssueQty.setText(""+model.getRmIssueQty());
+        myViewHolder.edIssueQty.setText(""+model.getRmReqQty());
         myViewHolder.tvSingleCut.setText(""+model.getExVarchar1());
         myViewHolder.tvDoubleCut.setText(""+model.getExVarchar2());
 

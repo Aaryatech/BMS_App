@@ -8,45 +8,6 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:background="@color/colorSelected"-->
-    <!--android:orientation="horizontal">-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Item Name" />-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Type" />-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Qty" />-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Edit Qty" />-->
-
-    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,34 +16,27 @@
         android:background="@color/colorWhite"
         android:orientation="horizontal">
 
-        <CheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:gravity="center"
-            />
 
         <TextView
-            android:id="@+id/tvItemName"
+            android:id="@+id/tvMaterName"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
             android:text="0" />
 
         <TextView
-            android:id="@+id/tvType"
+            android:id="@+id/tvOpenStock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
-            android:visibility="gone"
             android:text="10" />
 
         <TextView
-            android:id="@+id/tvQty"
+            android:id="@+id/tvProdQty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -90,19 +44,17 @@
             android:gravity="center"
             android:text="2" />
 
-        <EditText
-            android:id="@+id/edEditQty"
+        <TextView
+            android:id="@+id/tvIssueQty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:drawable/editbox_background_normal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
-            android:inputType="number"
             android:text="0" />
 
         <TextView
-            android:id="@+id/tvUOM"
+            android:id="@+id/tvCloseQty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

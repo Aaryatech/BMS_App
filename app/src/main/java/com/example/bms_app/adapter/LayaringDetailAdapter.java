@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.bms_app.R;
 import com.example.bms_app.model.SfPlanDetailForMixing;
@@ -22,7 +21,6 @@ public class LayaringDetailAdapter  extends RecyclerView.Adapter<LayaringDetailA
     private List<SfPlanDetailForMixing> layeringCreamList;
     private Context context;
     SfPlanDetailForMixing model;
-    float totalamount=0;
     EditText mEditText;
 
     public LayaringDetailAdapter(List<SfPlanDetailForMixing> layeringCreamList, Context context, SfPlanDetailForMixing model,EditText mEditText) {
@@ -74,18 +72,41 @@ public class LayaringDetailAdapter  extends RecyclerView.Adapter<LayaringDetailA
 
                 sfPlanDetailForMixing.setChecked(cb.isChecked());
                 layeringCreamList.get(pos).setChecked(cb.isChecked());
-
-                StringBuilder result=new StringBuilder();
-                if(model.getChecked()){
-                    totalamount+=model.getTotal();
-                }else{
-                    totalamount-=model.getTotal();
-                }
-                model.setProdQty(totalamount);
-                String no = String.format("%.3f", totalamount);
-                mEditText.setText(""+no);
-                Toast.makeText(context, ""+model.getProdQty(), Toast.LENGTH_LONG).show();
                 notifyDataSetChanged();
+
+//                if(model.getChecked()){
+//                    totalamount+=model.getTotal();
+//                }else{
+//                    totalamount-=model.getTotal();
+//                }
+//                model.setProdQty(totalamount);
+//                String no = String.format("%.3f", totalamount);
+//                mEditText.setText(""+no);
+//                Toast.makeText(context, ""+model.getProdQty(), Toast.LENGTH_LONG).show();
+
+                float totalamount=0;
+                //int flag =0;
+                    Log.e("MYTAG", "--------------------------------------CHECK------------------------------------" +layeringCreamList.get(pos).getChecked());
+                for(int k=0;k<layeringCreamList.size();k++) {
+
+                    if(layeringCreamList.get(k).getChecked()) {
+                       // flag =1;
+                        totalamount+=layeringCreamList.get(k).getTotal();
+                        //mEditText.setText("" + totalamount);
+                    }
+//                    else{
+//                        totalamount-= layeringCreamList.get(k).getTotal();
+//                        mEditText.setText("" + totalamount);
+//                    }
+
+                }
+                String no = String.format("%.3f", totalamount);
+                mEditText.setText("" + no);
+//                if(flag==0)
+//                {
+//                    mEditText.setText("0");
+//                }
+
 
 
             }

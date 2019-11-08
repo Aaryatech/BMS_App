@@ -48,7 +48,7 @@ public class CreamPreparationDetailAdapter extends RecyclerView.Adapter<CreamPre
         String name = arrayString[0];
         String unit = arrayString[1];
 
-        myViewHolder.tvItemName.setText(name);
+
         myViewHolder.tvUOM.setText(unit);
 
         Log.e("Decimal","--------------------------------------------------"+model.getRmQty());
@@ -57,10 +57,12 @@ public class CreamPreparationDetailAdapter extends RecyclerView.Adapter<CreamPre
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("RM");
+         //   myViewHolder.tvType.setText("RM");
+            myViewHolder.tvItemName.setText(name+"(RM)");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("SF");
+           // myViewHolder.tvType.setText("SF");
+            myViewHolder.tvItemName.setText(name+"(SF)");
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {

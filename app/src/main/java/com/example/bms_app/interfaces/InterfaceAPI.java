@@ -1,6 +1,7 @@
 package com.example.bms_app.interfaces;
 
 import com.example.bms_app.model.BillOfMaterialHeader;
+import com.example.bms_app.model.BmsStockHeader;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.DeptDetail;
 import com.example.bms_app.model.GetTempMixItemDetailList;
@@ -17,8 +18,13 @@ import com.example.bms_app.model.Production;
 import com.example.bms_app.model.ProductionDetail;
 import com.example.bms_app.model.SfItemHeader;
 import com.example.bms_app.model.ShowAllReq;
+import com.example.bms_app.model.Stock;
+import com.example.bms_app.model.StockDetail;
+import com.example.bms_app.model.StockDetailSf;
 import com.example.bms_app.model.TempMixing;
 import com.example.bms_app.model.Type;
+import com.example.bms_app.model.UpdateBmsSfStockList;
+import com.example.bms_app.model.UpdateBmsStockList;
 
 import java.util.ArrayList;
 
@@ -116,4 +122,28 @@ public interface InterfaceAPI {
 
     @POST("getBOMHeaderList")
     Call<ShowAllReq> getBOMHeaderList(@Query("frmdate") String frmdate, @Query("todate") String todate, @Query("bmsDeptId") int bmsDeptId, @Query("mixDeptId") int mixDeptId);
+
+    @POST("getBmsStockHeader")
+    Call<Stock> getBmsStockHeader(@Query("status") int status, @Query("rmType") int rmType, @Query("deptId") int deptId);
+
+    @POST("getCurentBmsStockRM")
+    Call<StockDetail> getCurentBmsStockRM(@Query("deptId") int deptId,@Query("stockDate") String stockDate);
+
+    @POST("getCurentBmsStockSF")
+    Call<StockDetailSf> getCurentBmsStockSF(@Query("deptId") int deptId, @Query("stockDate") String stockDate);
+
+    @POST("getBmsStockRMBetDate")
+    Call<StockDetail> getBmsStockRMBetDate(@Query("fromDate") String fromDate,@Query("toDate") String toDate);
+
+    @POST("getBmsStockSFBetDate")
+    Call<StockDetailSf> getBmsStockSFBetDate(@Query("fromDate") String fromDate, @Query("toDate") String toDate);
+
+    @POST("updateBmsStockForRM")
+    Call<Info> updateBmsStockForRM(@Body UpdateBmsStockList updateBmsStockList);
+
+    @POST("insertBmsStock")
+    Call<BmsStockHeader> insertBmsStock(@Body BmsStockHeader bmsStockHeader);
+
+    @POST("updateBmsStockForSF")
+    Call<Info> updateBmsStockForSF(@Body UpdateBmsSfStockList updateBmsSfStockList);
 }

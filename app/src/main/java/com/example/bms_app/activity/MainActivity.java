@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.bms_app.R;
 import com.example.bms_app.adapter.ExpandableListAdapter;
+import com.example.bms_app.constants.Constants;
 import com.example.bms_app.fragment.BMSListFragment;
 import com.example.bms_app.fragment.CotingCreamFragment;
 import com.example.bms_app.fragment.CreamPreparationFragment;
@@ -32,12 +33,16 @@ import com.example.bms_app.fragment.MainFragment;
 import com.example.bms_app.fragment.ManualProdFragment;
 import com.example.bms_app.fragment.MixingProductionFragment;
 import com.example.bms_app.fragment.MixingProductionListFragment;
+import com.example.bms_app.fragment.MixingStockFragment;
 import com.example.bms_app.fragment.RequestForMixingFragment;
 import com.example.bms_app.fragment.RequestForStoreFragment;
 import com.example.bms_app.fragment.ShowAllRequestFragment;
 import com.example.bms_app.fragment.ShowRequestBOMFragment;
+import com.example.bms_app.model.Configure;
+import com.example.bms_app.model.FrItemStockConfigure;
 import com.example.bms_app.model.Login;
 import com.example.bms_app.model.MenuModel;
+import com.example.bms_app.utils.CommonDialog;
 import com.example.bms_app.utils.CustomSharedPreference;
 import com.example.bms_app.utils.PermissionsUtil;
 import com.google.gson.Gson;
@@ -45,6 +50,10 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,7 +63,10 @@ public class MainActivity extends AppCompatActivity
     ExpandableListView expandableListView;
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
+    private List<FrItemStockConfigure> frItemStockConfiguresList;
     Login loginUser;
+    int bmsId=0,mixId=0;
+    String bmsName,mixName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +89,9 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        getSettingValue("MIX");
+        getSettingValueBMS("BMS");
 
         try {
             String userStr = CustomSharedPreference.getString(this, CustomSharedPreference.KEY_USER);
@@ -118,11 +133,128 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
+
+
+    private void getSettingValue(String mix) {
+        Log.e("PARAMETER","                 SETTING KEY VALUES     "+mix);
+        if (Constants.isOnline(getApplicationContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getApplicationContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<Configure> listCall = Constants.myInterface.getDeptSettingValue(mix);
+            listCall.enqueue(new Callback<Configure>() {
+                @Override
+                public void onResponse(Call<Configure> call, Response<Configure> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("SETTING RESPONCE MIX: ", " - " + response.body());
+
+                           // frItemStockConfiguresList.clear();
+                            frItemStockConfiguresList=response.body().getFrItemStockConfigure();
+                            if(frItemStockConfiguresList!=null)
+                            {
+                                if(frItemStockConfiguresList.size()>0)
+                                {
+                                    // if(settingKey.equalsIgnoreCase("PROD"))
+                                    // {
+                                    mixId=frItemStockConfiguresList.get(0).getSettingValue();
+                                    mixName=frItemStockConfiguresList.get(0).getSettingKey();
+                                    //}
+                                }
+                            }
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                            Toast.makeText(getApplicationContext(), "Unable to process", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), "Unable to process", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Configure> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    Toast.makeText(getApplicationContext(), "Unable to process", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getSettingValueBMS(String bms) {
+        Log.e("PARAMETER","                 SETTING KEY VALUES     "+bms);
+        if (Constants.isOnline(getApplicationContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getApplicationContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<Configure> listCall = Constants.myInterface.getDeptSettingValue(bms);
+            listCall.enqueue(new Callback<Configure>() {
+                @Override
+                public void onResponse(Call<Configure> call, Response<Configure> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("SETTING RESPONCE BMS: ", " - " + response.body());
+
+                           // frItemStockConfiguresList.clear();
+                            frItemStockConfiguresList=response.body().getFrItemStockConfigure();
+                            if(frItemStockConfiguresList!=null)
+                            {
+                                if(frItemStockConfiguresList.size()>0)
+                                {
+                                    // if(settingKey.equalsIgnoreCase("PROD"))
+                                    // {
+                                    bmsId=frItemStockConfiguresList.get(0).getSettingValue();
+                                    bmsName=frItemStockConfiguresList.get(0).getSettingKey();
+                                    //}
+                                }
+                            }
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                            Toast.makeText(getApplicationContext(), "Unable to process", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), "Unable to process", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Configure> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    Toast.makeText(getApplicationContext(), "Unable to process", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onBackPressed() {
 
         Fragment exit = getSupportFragmentManager().findFragmentByTag("Exit");
         Fragment homeFragment = getSupportFragmentManager().findFragmentByTag("MainFragment");
+        Fragment bmsListFragment = getSupportFragmentManager().findFragmentByTag("BMSListFragment");
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -153,16 +285,22 @@ public class MainActivity extends AppCompatActivity
                 homeFragment instanceof ShowRequestBOMFragment && homeFragment.isVisible() ||
                 homeFragment instanceof MixingProductionFragment && homeFragment.isVisible() ||
                 homeFragment instanceof MixingProductionListFragment && homeFragment.isVisible() ||
-                homeFragment instanceof BMSListFragment && homeFragment.isVisible() ||
-                homeFragment instanceof CreamPreparationFragment && homeFragment.isVisible() ||
-                homeFragment instanceof LayeringCreamFragment && homeFragment.isVisible() ||
-                homeFragment instanceof CotingCreamFragment && homeFragment.isVisible() ||
-                homeFragment instanceof IssusFragment && homeFragment.isVisible() ||
-                homeFragment instanceof ManualProdFragment && homeFragment.isVisible()) {
+                homeFragment instanceof MixingStockFragment && homeFragment.isVisible() ||
+                homeFragment instanceof BMSListFragment && homeFragment.isVisible()) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, new MainFragment(), "Exit");
             ft.commit();
-        }  else {
+        }else if (bmsListFragment instanceof CreamPreparationFragment && bmsListFragment.isVisible() ||
+                bmsListFragment instanceof LayeringCreamFragment && bmsListFragment.isVisible() ||
+                bmsListFragment instanceof CotingCreamFragment && bmsListFragment.isVisible() ||
+                bmsListFragment instanceof IssusFragment && bmsListFragment.isVisible() ||
+                bmsListFragment instanceof ManualProdFragment && bmsListFragment.isVisible()) {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new BMSListFragment(), "MainFragment");
+            ft.commit();
+
+        } else {
             super.onBackPressed();
         }
     }
@@ -250,8 +388,8 @@ public class MainActivity extends AppCompatActivity
         childModel = new MenuModel("Mixing Production List", false, false, "Mixing Production List");
         childModelsList.add(childModel);
 
-//        childModel = new MenuModel("Mixing Stock", false, false, "Mixing Stock");
-//        childModelsList.add(childModel);
+        childModel = new MenuModel("Mixing Stock", false, false, "Mixing Stock");
+        childModelsList.add(childModel);
 
         if (menuModel.hasChildren) {
             childList.put(menuModel, childModelsList);
@@ -264,24 +402,20 @@ public class MainActivity extends AppCompatActivity
         childModel = new MenuModel("Set for Production", false, false, "Set for Production");
         childModelsList.add(childModel);
 
-//        childModel = new MenuModel("BMS Production List", false, false, "BMS Production List");
+        childModel = new MenuModel("BMS Stock", false, false, "BMS Stock");
+        childModelsList.add(childModel);
+//
+//        childModel = new MenuModel("Layering Cream Production", false, false, "Layering Cream Production");
 //        childModelsList.add(childModel);
-
-
-        childModel = new MenuModel("Cream Preparation", false, false, "Cream Preparation");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Layering Cream Production", false, false, "Layering Cream Production");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Coting Cream Production", false, false, "Coting Cream Production");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Issues from BMS", false, false, "Issues from BMS");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Manual Production", false, false, "Manual Production");
-        childModelsList.add(childModel);
+//
+//        childModel = new MenuModel("Coting Cream Production", false, false, "Coting Cream Production");
+//        childModelsList.add(childModel);
+//
+//        childModel = new MenuModel("Issues from BMS", false, false, "Issues from BMS");
+//        childModelsList.add(childModel);
+//
+//        childModel = new MenuModel("Manual Production", false, false, "Manual Production");
+//        childModelsList.add(childModel);
 
         if (menuModel.hasChildren) {
             childList.put(menuModel, childModelsList);
@@ -384,42 +518,48 @@ public class MainActivity extends AppCompatActivity
                         args.putString("slugName", model.getUrl());
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Cream Preparation"))
+                    }
+                    if(model.getUrl().equalsIgnoreCase("Mixing Stock"))
                     {
-                        Fragment adf = new CreamPreparationFragment();
+                        Fragment adf = new MixingStockFragment();
                         Bundle args = new Bundle();
                         args.putString("slugName", model.getUrl());
+                        args.putInt("strDept", mixId);
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Coting Cream Production"))
+                    }
+                    if(model.getUrl().equalsIgnoreCase("BMS Stock"))
                     {
-                        Fragment adf = new CotingCreamFragment();
+                        Fragment adf = new MixingStockFragment();
                         Bundle args = new Bundle();
                         args.putString("slugName", model.getUrl());
+                        args.putInt("strDept", bmsId);
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Layering Cream Production"))
-                    {
-                        Fragment adf = new LayeringCreamFragment();
-                        Bundle args = new Bundle();
-                        args.putString("slugName", model.getUrl());
-                        adf.setArguments(args);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Issues from BMS"))
-                    {
-                        Fragment adf = new IssusFragment();
-                        Bundle args = new Bundle();
-                        args.putString("slugName", model.getUrl());
-                        adf.setArguments(args);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Manual Production"))
-                    {
-                        Fragment adf = new ManualProdFragment();
-                        Bundle args = new Bundle();
-                        args.putString("slugName", model.getUrl());
-                        adf.setArguments(args);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Logout"))
+                    }
+//                    if(model.getUrl().equalsIgnoreCase("Layering Cream Production"))
+//                    {
+//                        Fragment adf = new LayeringCreamFragment();
+//                        Bundle args = new Bundle();
+//                        args.putString("slugName", model.getUrl());
+//                        adf.setArguments(args);
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
+//                    }if(model.getUrl().equalsIgnoreCase("Issues from BMS"))
+//                    {
+//                        Fragment adf = new IssusFragment();
+//                        Bundle args = new Bundle();
+//                        args.putString("slugName", model.getUrl());
+//                        adf.setArguments(args);
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
+//                    }if(model.getUrl().equalsIgnoreCase("Manual Production"))
+//                    {
+//                        Fragment adf = new ManualProdFragment();
+//                        Bundle args = new Bundle();
+//                        args.putString("slugName", model.getUrl());
+//                        adf.setArguments(args);
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
+//                    }
+                    if(model.getUrl().equalsIgnoreCase("Logout"))
                     {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
                         builder.setTitle("Logout");
@@ -433,8 +573,6 @@ public class MainActivity extends AppCompatActivity
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
-
-
                             }
                         });
                         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

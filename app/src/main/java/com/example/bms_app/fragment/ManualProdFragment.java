@@ -364,7 +364,6 @@ Login loginUser;
                         if (response.body() != null) {
 
                             Log.e("HEADER BOM : ", " ------------------------------SAVE PRODUCTION HEADER------------------------ " + response.body());
-                            Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                             String srtPrdId = tvProductId.getText().toString().trim();
                             String srtEditQty = edQtyKg.getText().toString().trim();
@@ -478,6 +477,7 @@ Login loginUser;
                         if (response.body() != null) {
 
                             Log.e("SAVE MIXING : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
+                            Toast.makeText(getActivity(), "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.content_frame, new MainFragment(), "MainFragment");
                             ft.commit();
@@ -696,6 +696,10 @@ Login loginUser;
 
                     dialog.dismiss();
                     getSfItemDetailsApp(0,0);
+                    tvProductId.setText("");
+                    tvProduct.setText("");
+                    edQtyKg.setText("0");
+
                     tvType.setText(""+model.getSfTypeName());
                     tvTypeId.setText(""+model.getId());
                     typeId= Integer.parseInt(tvTypeId.getText().toString());

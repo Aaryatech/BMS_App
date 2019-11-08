@@ -10,18 +10,39 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_heading"
+
+        <LinearLayout
+            android:id="@+id/llHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/sf_ui_bold"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="Mixing Production Detail"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp" />
+            android:layout_alignParentTop="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/sf_ui_bold"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text="Mixing Production Detail"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/ivClose"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_close" />
+
+        </LinearLayout>
+
+
 
         <LinearLayout
             android:id="@+id/linearLayout"

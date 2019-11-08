@@ -333,7 +333,10 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
             if(v.getId()==R.id.btnAdd)
             {
+                sfItemTempList = new ArrayList<>();
                 Log.e("MYTAG", "-----------------------------------DETAIL BIN---------------------"+detailList);
+                Log.e("LIST : ", " ---------------------- TEMP----------------------- " + sfItemTempList);
+
                 for(int i=0;i<detailList.size();i++)
                 {
                     if(detailList.get(i).getChecked())
@@ -355,7 +358,6 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                         BillOfMaterialDetailed billOfMaterialDetailed = new BillOfMaterialDetailed(0, 0, sfItemTempList.get(i).getRmType(), sfItemTempList.get(i).getRmId(), name, unit, sfItemTempList.get(i).getRmQty(), sfItemTempList.get(i).getRmQty(), 0, 0, "", "", "", 0, 0, 0, sfItemTempList.get(i).getRmQty(), 0, 0);
                         billDetailList.add(billOfMaterialDetailed);
                     }
-
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
@@ -406,6 +408,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                         if (response.body() != null) {
 
                             Log.e("SAVE MIXING : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
+                            Toast.makeText(getActivity(), "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.content_frame, new CreamPreparationFragment(), "MainFragment");
                             ft.commit();
@@ -492,7 +495,6 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                         if (response.body() != null) {
 
                             Log.e("HEADER BOM : ", " ------------------------------SAVE PRODUCTION HEADER------------------------ " + response.body());
-                            Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                             for(int i=0;i<detailList.size();i++) {
                                 if(detailList.get(i).getChecked())
@@ -631,7 +633,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
 
 
     private void getSfItemDetailsApp(Integer rmId, float editTotal) {
-      //  Log.e("PARAMETER","                 RM ID     "+rmId  +"               EDITED VALUES           "+editTotal);
+        Log.e("PARAMETER","                 RM ID     "+rmId  +"               EDITED VALUES           "+editTotal);
         if (Constants.isOnline(getActivity())) {
             final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
             commonDialog.show();
@@ -643,49 +645,40 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                     try {
                         if (response.body() != null) {
 
-                         //   Log.e("PRODUCTION : ", " ----------------------SF ITEM DETAIL----------------------- " + response.body());
-                           // sfItemDetailList.clear();
+                            sfItemDetailList = new ArrayList<>();
                              List<SfItemDetail> tempList = new ArrayList<>();
                             tempList= response.body().getSfItemDetail();
-                           // Log.e("LIST : ", " ----------------------LIST RESPONCE----------------------- " + tempList);
+
                             for(int i=0;i<tempList.size();i++){
                                 sfItemDetailList.add(tempList.get(i));
                             }
-                            //sfItemDetailList.addAll();
-                            sfItemTempList = new ArrayList<>();
 
-                             //List<SfItemDetail> sfItemTempList = new ArrayList<>();
+                           // sfItemTempList = new ArrayList<>();
+
                              for(int j=0;j<sfItemDetailList.size();j++)
                                 {
-                                  //  Log.e("LIST : ", " ----------------------SIZE----------------------- " + sfItemDetailList.size());
-
                                     int flag=0;
 
                                    for(int k=0;k<sfItemTempList.size();k++)
                                    {
                                        if(sfItemDetailList.get(j).getRmId()==sfItemTempList.get(k).getRmId() && sfItemDetailList.get(j).getRmType()==sfItemTempList.get(k).getRmType())
                                        {
-                                         //  Log.e("LIST : ", " ----------------------EQUAL----------------------- ");
+
                                            sfItemTempList.get(k).setRmQty(sfItemTempList.get(k).getRmQty()+sfItemDetailList.get(j).getRmQty());
-                                         //  Log.e("LIST : ", " ----------------------TOTAL----------------------- "+sfItemTempList.get(k).getRmQty());
                                            flag=1;
                                             break;
-
                                        }
                                    }
                                    if(flag==0)
                                    {
-                                       //sfItemTempList.clear();
                                        SfItemDetail sfItemDetail=sfItemDetailList.get(j);
-                                      // SfItemDetail sfItemDetail=new SfItemDetail(sfItemDetailList.get(j).getSfDid(),sfItemDetailList.get(j).getSfId(),sfItemDetailList.get(j).getRmType(),sfItemDetailList.get(j).getRmId(),sfItemDetailList.get(j).getRmName(),sfItemDetailList.get(j).getRmQty()/1000,sfItemDetailList.get(j).getRmUnit(),sfItemDetailList.get(j).getRmWeight(),sfItemDetailList.get(j).getDelStatus());
                                        sfItemTempList.add(sfItemDetail);
-                                      // Log.e("DATA 1: ", "--------------------------DATA 1---------------------------"+sfItemTempList);
+
                                    }
                                 }
 
                             Log.e("LIST : ", " ----------------------LIST ----------------------- " + sfItemDetailList);
                             Log.e("LIST : ", " ----------------------LIST TEMP----------------------- " + sfItemTempList);
-
 
                             // Log.e("DATA : ", "--------------------------DATA---------------------------"+sfItemTempList);
                             adapter1 = new CreamPreparationDetailAdapter(sfItemTempList, getContext());

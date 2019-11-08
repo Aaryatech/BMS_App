@@ -4,12 +4,14 @@ package com.example.bms_app.fragment;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -75,6 +77,8 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
 
+    String json1;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,6 +100,9 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        getBMSList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()));
+        // sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis())
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,24 +145,45 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
         tv_fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Log.e("MYTAG : ", "-------------------------------LIST -------------------"+productionList);
                 if(productionList!=null) {
                     for (int i = 0; i < productionList.size(); i++) {
                         if (productionList.get(i).getChecked()) {
-                            Gson gson = new Gson();
-                            String json = gson.toJson(productionList.get(i));
-                            Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
-                            Log.e("LIST : ", "-------------------------------pos -------------------" + position);
-                            CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
-                           // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+                            Log.e("MYTAG : ", "-------------------------------CHECK -------------------");
+//                        if (json1!=null) {
+//                            Log.e("JSON","----------------------------------------------"+json1);
 
-                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new CreamPreparationFragment(), "MainFragment");
-                            ft.commit();
+                                if (productionList.get(i).getProductionStatus().equalsIgnoreCase("5")) {
+                                    Log.e("MYTAG : ", "-------------------------------STATUS 5 -------------------");
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                                    builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                                    builder.setMessage("This production is close ! you cant add cream Preparation");
 
-                        }else{
-                            Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+
+                                } else {
+                                    Log.e("MYTAG : ", "-------------------------------STATUS  -------------------");
+
+                                Gson gson = new Gson();
+                                String json = gson.toJson(productionList.get(i));
+                                    Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                                    Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                                    CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                                    // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                    ft.replace(R.id.content_frame, new CreamPreparationFragment(), "BMSListFragment");
+                                    ft.commit();
+                                }
                         }
+
                     }
                 }
             }
@@ -168,19 +196,33 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
                 if(productionList!=null) {
                     for (int i = 0; i < productionList.size(); i++) {
                         if (productionList.get(i).getChecked()) {
-                            Gson gson = new Gson();
-                            String json = gson.toJson(productionList.get(i));
-                            Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
-                            Log.e("LIST : ", "-------------------------------pos -------------------" + position);
-                            CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
-                           // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+                            if (productionList.get(i).getProductionStatus().equalsIgnoreCase("5")) {
 
-                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new CotingCreamFragment(), "MainFragment");
-                            ft.commit();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                                builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                                builder.setMessage("This production is close ! you cant add coting cream Preparation");
 
-                        }else{
-                            Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                                builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+
+                            } else {
+                                Gson gson = new Gson();
+                                String json = gson.toJson(productionList.get(i));
+                                Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                                Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                                CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                                // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.content_frame, new CotingCreamFragment(), "BMSListFragment");
+                                ft.commit();
+                            }
                         }
                     }
                 }
@@ -192,19 +234,34 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
             public void onClick(View v) {
                 for (int i = 0; i < productionList.size(); i++) {
                     if (productionList.get(i).getChecked()) {
-                        Gson gson = new Gson();
-                        String json = gson.toJson(productionList.get(i));
-                        Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
-                        Log.e("LIST : ", "-------------------------------pos -------------------" + position);
-                        CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
-                       // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+                        if (productionList.get(i).getProductionStatus().equalsIgnoreCase("5")) {
 
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.content_frame, new LayeringCreamFragment(), "MainFragment");
-                        ft.commit();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                            builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                            builder.setMessage("This production is close ! you cant add layering cream Preparation");
 
-                    }else{
-                        Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                        } else {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(productionList.get(i));
+                            Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                            Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                            CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                            // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
+
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new LayeringCreamFragment(), "BMSListFragment");
+                            ft.commit();
+
+                        }
                     }
                 }
 
@@ -216,19 +273,18 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
             public void onClick(View v) {
                 for (int i = 0; i < productionList.size(); i++) {
                     if (productionList.get(i).getChecked()) {
-                        Gson gson = new Gson();
-                        String json = gson.toJson(productionList.get(i));
-                        Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
-                        Log.e("LIST : ", "-------------------------------pos -------------------" + position);
-                        CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
-                       // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
 
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.content_frame, new IssusFragment(), "MainFragment");
-                        ft.commit();
+                            Gson gson = new Gson();
+                            String json = gson.toJson(productionList.get(i));
+                            Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
+                            Log.e("LIST : ", "-------------------------------pos -------------------" + position);
+                            CustomSharedPreference.putString(getActivity(), CustomSharedPreference.PROD_ID, json);
+                            // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
 
-                    }else{
-                        Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new IssusFragment(), "BMSListFragment");
+                            ft.commit();
+
                     }
                 }
 
@@ -240,6 +296,7 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
             public void onClick(View v) {
                 for (int i = 0; i < productionList.size(); i++) {
                     if (productionList.get(i).getChecked()) {
+
                         Gson gson = new Gson();
                         String json = gson.toJson(productionList.get(i));
                         Log.e("LIST : ", "-------------------------------MODEL -------------------" + json);
@@ -248,20 +305,16 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
                        // Toast.makeText(getActivity(), "Header Id save..........", Toast.LENGTH_SHORT).show();
 
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.content_frame, new ManualProdFragment(), "MainFragment");
+                        ft.replace(R.id.content_frame, new ManualProdFragment(), "BMSListFragment");
                         ft.commit();
 
-                    }else{
-                        Toast.makeText(getActivity(), "Please select item..........", Toast.LENGTH_SHORT).show();
+
                     }
                 }
 
             }
         });
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        getBMSList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()));
-       // sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis())
 
 
         btnSetProduction.setOnClickListener(this);

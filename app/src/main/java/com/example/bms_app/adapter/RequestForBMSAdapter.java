@@ -47,7 +47,6 @@ public class RequestForBMSAdapter extends RecyclerView.Adapter<RequestForBMSAdap
       //  myViewHolder.rbSelect.setChecked(i == mSelectedItem);
 
 
-
         if(model.getIsPlanned()==1) {
             myViewHolder.tvIsPlane.setText("Yes");
         }else if(model.getIsPlanned()==0)

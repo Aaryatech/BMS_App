@@ -113,10 +113,15 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
         {
             Log.e("False","---------------------------------"+model.getDoubleCut());
             myViewHolder.btnBOM.setEnabled(false);
+           // myViewHolder.btnBOM.setBackgroundColor(context.getResources().getColor(R.color.lightPink));
+            myViewHolder.btnBOM.setBackgroundResource(R.drawable.rounded_corner_light_button);
+
         }else if(model.getDoubleCut()==0.0)
         {
             Log.e("True","---------------------------------"+model.getDoubleCut());
             myViewHolder.btnBOM.setEnabled(true);
+           // myViewHolder.btnBOM.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+            myViewHolder.btnBOM.setBackgroundResource(R.drawable.rounded_corner_button);
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {
@@ -421,6 +426,7 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
                         if (response.body() != null) {
 
                             Log.e("SAVE : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
+                            Toast.makeText(context, "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             MainActivity activity=(MainActivity)context;
                             FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.content_frame, new CotingCreamFragment(), "MainFragment");

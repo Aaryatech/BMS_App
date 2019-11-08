@@ -453,6 +453,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
         LayaringDetailAdapter mAdapter;
         ProdPlanHeader prodPlanHeader;
         List<SfPlanDetailForMixing> itemDetailList;
+        float totalamount=0;
 
 
 
@@ -512,12 +513,24 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                         for(int k=0;k<itemDetailList.size();k++) {
                             Log.e("LIST SET", "------------------------" + itemDetailList.get(k));
                             itemDetailList.get(k).setChecked(true);
+                           // mAdapter.notifyDataSetChanged();
+
+                            totalamount+=itemDetailList.get(k).getTotal();
+                            //itemDetailList.get(k).setProdQty(totalamount);
+                            String no = String.format("%.3f", totalamount);
+                            edEditQty.setText(""+no);
+
                         }
                     }else{
                         for(int k=0;k<itemDetailList.size();k++)
                         {
                             Log.e("LIST SET","------------------------"+itemDetailList.get(k));
                             itemDetailList.get(k).setChecked(false);
+                           // mAdapter.notifyDataSetChanged();
+                            totalamount-=itemDetailList.get(k).getTotal();
+                           // itemDetailList.get(k).setProdQty(totalamount);
+                            String no = String.format("%.3f", totalamount);
+                            edEditQty.setText(""+no);
 
                         }
                     }
@@ -757,6 +770,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                         if (response.body() != null) {
 
                             Log.e("SAVE : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
+                            Toast.makeText(context, "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             MainActivity activity=(MainActivity)context;
                             FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.content_frame, new LayeringCreamFragment(), "MainFragment");

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -30,7 +31,9 @@ import android.widget.Toast;
 
 import com.example.bms_app.BuildConfig;
 import com.example.bms_app.R;
+import com.example.bms_app.activity.MainActivity;
 import com.example.bms_app.constants.Constants;
+import com.example.bms_app.fragment.MixingProductionListFragment;
 import com.example.bms_app.model.Configure;
 import com.example.bms_app.model.FrItemStockConfigure;
 import com.example.bms_app.model.GetTempMixItemDetailList;
@@ -324,7 +327,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
             btnAddProd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   // dismiss();
+                   dismiss();
                     for(int i=0;i<detailList.size();i++) {
                         TempMixing model = new TempMixing(0, 0,detailList.get(i).getRmId(),detailList.get(i).getTotal(),prodPlanHeader.getProductionHeaderId());
                         tempMixingDetailList.add(model);
@@ -594,7 +597,10 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                         if (response.body() != null) {
 
                             Log.e("UPDATE : ", " ------------------------------UPDATE MIXING------------------------ " + response.body());
-
+                            MainActivity activity=(MainActivity)context;
+                            FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new MixingProductionListFragment(), "MainFragment");
+                            ft.commit();
                             commonDialog1.dismiss();
 
                         } else {

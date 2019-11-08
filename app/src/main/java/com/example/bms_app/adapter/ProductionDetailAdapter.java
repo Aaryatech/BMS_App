@@ -65,12 +65,12 @@ public class ProductionDetailAdapter extends RecyclerView.Adapter<ProductionDeta
             public void afterTextChanged(Editable editable) {
                     try {
                         float editQty = Float.parseFloat(editable.toString());
-                        model.setAutoRmReqQty(editQty);
+                        model.setRmReqQty(editQty);
                         Log.e("DETAIL MODEL","------------------------------------------"+model);
 
                     } catch (Exception e) {
                         float qty = 0;
-                        model.setAutoRmReqQty(0);
+                        model.setRmReqQty(0);
                     }
                 }
 

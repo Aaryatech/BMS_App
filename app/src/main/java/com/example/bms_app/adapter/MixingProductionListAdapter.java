@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -189,6 +190,7 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
 
     private class DeptDialog extends Dialog {
         public Button btnPdf,btnCancel;
+        public ImageView ivClose;
         public RecyclerView recyclerView;
         private ProductionMixingDetailListAdapter mAdapter;
         MixingHeaderList mixingHeaderList;
@@ -218,8 +220,16 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
 
             btnPdf = (Button) findViewById(R.id.btnPdf);
             btnCancel = (Button) findViewById(R.id.btnCancel);
+            ivClose =(ImageView) findViewById(R.id.ivClose);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
+
+            ivClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
 
             btnCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
