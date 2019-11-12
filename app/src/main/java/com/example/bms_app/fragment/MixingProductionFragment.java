@@ -65,7 +65,7 @@ public class MixingProductionFragment extends Fragment implements View.OnClickLi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_mixing_production, container, false);
-        getActivity().setTitle("Mixing Production");
+        getActivity().setTitle("Add Mixing");
 
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);

@@ -55,6 +55,7 @@ public class ShowAllRequestFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<FrItemStockConfigure> frItemStockConfiguresList;
     List<BillOfAllMaterialHeader> showAllList = new ArrayList<>();
+    List<BillOfAllMaterialHeader> showList = new ArrayList<>();
     List<BillOfAllMaterialHeader> showAllFilterList = new ArrayList<>();
     RequestForAllAdapter adapter;
     int fromId=0,toId=0;
@@ -91,10 +92,19 @@ public class ShowAllRequestFragment extends Fragment {
                         if (response.body() != null) {
 
                             Log.e("SHOW ALL LIST : ", " - " + response.body());
-                            showAllList.clear();
-                            showAllList = response.body().getBillOfAllMaterialHeader();
+                            showList.clear();
+                            showList = response.body().getBillOfAllMaterialHeader();
 
-                            // productionList.add(productionDetail);
+                          //   productionList.add(productionDetail);
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+                            for(int i=0;i<showList.size();i++)
+                            {
+                                if(showList.get(i).getReqDate().equalsIgnoreCase(sdf.format(System.currentTimeMillis())) || showList.get(i).getStatus()==0)
+                                {
+                                    showAllList.add(showList.get(i));
+                                }
+                            }
 
                             Log.e("Production model","------------------------------------------"+showAllList);
 
@@ -216,10 +226,10 @@ public class ShowAllRequestFragment extends Fragment {
 
                             ArrayList<Integer> status = new ArrayList<>();
                             status.add(0);
-                            //status.add(1);
-                           // status.add(2);
-                           // status.add(3);
-                           // status.add(4);
+                            status.add(1);
+                            status.add(2);
+                            status.add(3);
+                            status.add(4);
 
                             getAllRequest(fromId,toId,status);
 

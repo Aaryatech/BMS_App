@@ -15,12 +15,14 @@ import android.widget.TextView;
 import com.example.bms_app.R;
 import com.example.bms_app.model.ProdMixingReqP1;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ProductionMixingDetailAdapter extends RecyclerView.Adapter<ProductionMixingDetailAdapter.MyViewHolder> {
 
     private List<ProdMixingReqP1> mixingDetailList;
     private Context context;
+    private static DecimalFormat df = new DecimalFormat("0.0");
 
     public ProductionMixingDetailAdapter(List<ProdMixingReqP1> mixingDetailList, Context context) {
         this.mixingDetailList = mixingDetailList;
@@ -44,7 +46,13 @@ public class ProductionMixingDetailAdapter extends RecyclerView.Adapter<Producti
         myViewHolder.tvMultiplicationFactor.setText(""+model.getMulFactor());
         myViewHolder.tvReqQty.setText(""+model.getTotal()*model.getMulFactor());
         myViewHolder.tvUnit.setText(""+model.getUom());
-        myViewHolder.edEditReqQty.setText(""+model.getTotal()*model.getMulFactor());
+       // myViewHolder.edEditReqQty.setText(""+model.getTotal()*model.getMulFactor());
+
+        //double roundOff = Math.round(model.getTotal()*model.getMulFactor() * 10d) / 10d;
+        Double roundOff =Math.round(model.getTotal()*model.getMulFactor()*100)/100.0d;
+
+        Log.e("ROUND OFF","-----------------------------------"+roundOff);
+        myViewHolder.edEditReqQty.setText(""+roundOff);
 
         try {
             model.setPrevtotal(model.getTotal());

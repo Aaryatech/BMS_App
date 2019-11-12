@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bms_app.R;
-import com.example.bms_app.adapter.RequestBOMAdapter;
+import com.example.bms_app.adapter.IssueFromBMSAdapter;
 import com.example.bms_app.constants.Constants;
 import com.example.bms_app.model.BillOfAllMaterialHeader;
 import com.example.bms_app.model.Configure;
@@ -51,12 +51,12 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ShowRequestBOMFragment extends Fragment {
+public class IssueFromBMSFragment extends Fragment {
     private RecyclerView recyclerView;
 
     List<BillOfAllMaterialHeader> showAllList = new ArrayList<>();
     List<BillOfAllMaterialHeader> showAllPendingList = new ArrayList<>();
-    RequestBOMAdapter adapter;
+    IssueFromBMSAdapter adapter;
 
     private List<FrItemStockConfigure> frItemStockConfiguresList;;
     List<BillOfAllMaterialHeader> showAllFilterList = new ArrayList<>();
@@ -67,17 +67,15 @@ public class ShowRequestBOMFragment extends Fragment {
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_show_request_bom, container, false);
-        getActivity().setTitle("Request from Production");
+        View view= inflater.inflate(R.layout.fragment_issue_from_bm, container, false);
+        getActivity().setTitle("Issue from BMS");
         recyclerView = view.findViewById(R.id.recyclerView);
         getSettingValue("PROD");
         getShowRequestBOM();
-
         return view;
     }
 
@@ -112,7 +110,7 @@ public class ShowRequestBOMFragment extends Fragment {
                                     //}
                                 }
                             }
-                            getProductionSetting("MIX");
+                            getProductionSetting("BMS");
                             commonDialog.dismiss();
 
                         } else {
@@ -203,6 +201,7 @@ public class ShowRequestBOMFragment extends Fragment {
     }
 
 
+
     private void getShowRequestBOM() {
         if (Constants.isOnline(getContext())) {
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
@@ -232,7 +231,7 @@ public class ShowRequestBOMFragment extends Fragment {
                             }
                             Log.e("Production model","--------------------Pending----------------------"+showAllPendingList);
 
-                            adapter = new RequestBOMAdapter(showAllPendingList, getContext());
+                            adapter = new IssueFromBMSAdapter(showAllPendingList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -560,7 +559,6 @@ public class ShowRequestBOMFragment extends Fragment {
             }
         };
     }
-
     private void getAllRequestFilter(String fromDate, String toDate,int fromId, int toId) {
         Log.e("PARAMETER","          FROM DATE        "+fromDate+"            TO DATE          "+toDate+"            FROM ID       "+ fromId        +"          TO ID     " +   toId );
 
@@ -582,7 +580,7 @@ public class ShowRequestBOMFragment extends Fragment {
 
                             Log.e("Production model","--------------------Filter----------------------"+showAllFilterList);
 
-                            adapter = new RequestBOMAdapter(showAllFilterList, getContext());
+                            adapter = new IssueFromBMSAdapter(showAllFilterList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -612,6 +610,5 @@ public class ShowRequestBOMFragment extends Fragment {
             Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 }

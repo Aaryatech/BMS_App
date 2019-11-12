@@ -21,7 +21,8 @@
             <TextView
                 android:id="@+id/tvItemName"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/sf_ui_regular"
                 android:gravity="start"
@@ -32,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.1"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:fontFamily="@font/sf_ui_regular"
                 android:gravity="center"
                 android:text="10" />
@@ -55,6 +56,7 @@
             android:background="@android:drawable/editbox_background_normal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
+            android:visibility="gone"
             android:inputType="none"
             android:enabled="false"
             android:text="0" />

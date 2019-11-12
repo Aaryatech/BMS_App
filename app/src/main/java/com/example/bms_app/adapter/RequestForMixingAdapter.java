@@ -181,6 +181,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
     private class DeptDialog extends Dialog {
         public Button btnSubmit,btnCancel;
         public RecyclerView recyclerView;
+        public TextView tvDate,tvNo,tvDept;
         private ProductionDetailAdapter mAdapter;
         //ProdPlanHeader prodDetail;
        // int productionHeaderId;
@@ -209,30 +210,48 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
             wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
             window.setAttributes(wlp);
 
+            tvDate = (TextView) findViewById(R.id.tvDate);
+            tvNo = (TextView) findViewById(R.id.tvNo);
+            tvDept = (TextView) findViewById(R.id.tvDept);
+
             btnSubmit = (Button) findViewById(R.id.btnSubmit);
             btnCancel = (Button) findViewById(R.id.btnCancel);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
 //            getProductionSetting(dept,prodPlanHeader.getProductionHeaderId());
+
+            try{
+                tvDate.setText("Prod Date : "+prodPlanHeader.getProductionDate());
+                tvNo.setText("Prod No : "+prodPlanHeader.getProductionHeaderId());
+                tvDept.setText("Dept : "+"PROD-MIX");
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             getSettingValue("PROD");
 
             btnSubmit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    dismiss();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-                   // sdf.format(System.currentTimeMillis())
+//
+//                    if(detailList.size()==0)
+//                    {
+//                        Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+//                    }else {
+                        dismiss();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+                        // sdf.format(System.currentTimeMillis())
 //                    String dateFormate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-                    Date todayDate = Calendar.getInstance().getTime();
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                    String currentDate = formatter.format(todayDate);
-                    Log.e("Mytag","---------------------------todayString-------------------------------"+currentDate);
+                        Date todayDate = Calendar.getInstance().getTime();
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        String currentDate = formatter.format(todayDate);
+                        Log.e("Mytag", "---------------------------todayString-------------------------------" + currentDate);
 
-                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),sdf1.format(System.currentTimeMillis()),1,fromId,fromName,toId,toName,login.getUser().getId(),sdf1.format(System.currentTimeMillis()),login.getUser().getId(),sdf1.format(System.currentTimeMillis()),0,0,0,0,0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
-                    saveDetail(billOfMaterialHeader,prodPlanHeader);
+                        BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(), sdf1.format(System.currentTimeMillis()), 1, fromId, fromName, toId, toName, login.getUser().getId(), sdf1.format(System.currentTimeMillis()), login.getUser().getId(), sdf1.format(System.currentTimeMillis()), 0, 0, 0, 0, 0, "", "", prodPlanHeader.getIsPlanned(), 0, 0, sdf.format(System.currentTimeMillis()), 0, sdf.format(System.currentTimeMillis()), billDetailList);
+                        saveDetail(billOfMaterialHeader, prodPlanHeader);
+                    //}
                 }
             });
 
@@ -567,7 +586,12 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
                             Log.e("PRODUCTION DETAIL: ", " - " + response.body());
                             detailList.clear();
                             detailList=response.body().getSfPlanDetailForMixing();
-                            new DeptDialog(context,model,dept).show();
+                            if(detailList.size()==0)
+                            {
+                                 Toast.makeText(context, "Detail is empty...", Toast.LENGTH_SHORT).show();
+                            }else {
+                                new DeptDialog(context, model, dept).show();
+                            }
                             commonDialog.dismiss();
 
                         } else {

@@ -85,7 +85,7 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_bmslist, container, false);
-        getActivity().setTitle("BMS List");
+        getActivity().setTitle("Add BMS Production");
         recyclerView = view.findViewById(R.id.recyclerView);
         btnSetProduction = view.findViewById(R.id.btnSetProduction);
 

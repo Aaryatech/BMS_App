@@ -54,6 +54,7 @@ public class MixingProductionListFragment extends Fragment implements View.OnCli
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     List<MixingHeaderList> mixingList = new ArrayList<>();
+    List<MixingHeaderList> mixList = new ArrayList<>();
     MixingProductionListAdapter adapter;
 
     long fromDateMillis, toDateMillis;
@@ -91,10 +92,18 @@ public class MixingProductionListFragment extends Fragment implements View.OnCli
                         if (response.body() != null) {
 
                             Log.e("MIXING  : ", " ------------------------PRODUCTION MIXING LIST--------------------- " + response.body());
-                            mixingList.clear();
-                            mixingList = response.body().getMixingHeaderList();
+                            mixList.clear();
+                            mixList = response.body().getMixingHeaderList();
 
-                            // productionList.add(productionDetail);
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+                            for(int i=0;i<mixList.size();i++)
+                            {
+                                if(mixList.get(i).getExInt1()==10)
+                                {
+                                    mixingList.add(mixList.get(i));
+                                }
+                            }
 
                             Log.e("Mixing model","------------------------------------------"+mixingList);
 

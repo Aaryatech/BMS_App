@@ -28,13 +28,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@color/colorSelected"
+            android:background="@color/colorPrimary"
+            android:padding="5dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="Item Name" />
@@ -44,6 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="Qty" />
@@ -52,14 +55,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
+                android:visibility="gone"
                 android:text="Edit Qty" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="UOM" />

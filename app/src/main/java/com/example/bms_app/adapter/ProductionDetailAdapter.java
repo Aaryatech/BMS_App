@@ -38,17 +38,20 @@ public class ProductionDetailAdapter extends RecyclerView.Adapter<ProductionDeta
     @Override
     public void onBindViewHolder(@NonNull ProductionDetailAdapter.MyViewHolder myViewHolder, int i) {
         final BillOfMaterialDetailed model=detailList.get(i);
-        myViewHolder.tvItemName.setText(""+model.getRmName());
+       // myViewHolder.tvItemName.setText(""+model.getRmName());
 
         myViewHolder.tvQty.setText(""+model.getAutoRmReqQty());
+        //String editValue = String.format("%.3f", model.getAutoRmReqQty());
         myViewHolder.edEditQty.setText(""+model.getAutoRmReqQty());
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("RM");
+            myViewHolder.tvItemName.setText(""+model.getRmName()+"(RM)");
+          //  myViewHolder.tvType.setText("RM");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("SF");
+            myViewHolder.tvItemName.setText(""+model.getRmName()+"(SF)");
+            //myViewHolder.tvType.setText("SF");
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {

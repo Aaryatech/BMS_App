@@ -1,7 +1,9 @@
 package com.example.bms_app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -90,6 +92,10 @@ public class CreamPreparationAdapter extends RecyclerView.Adapter<CreamPreparati
                 sfPlanDetailForMixing.setChecked(cb.isChecked());
                 cpList.get(pos).setChecked(cb.isChecked());
 
+                Intent pushNotificationIntent = new Intent();
+                pushNotificationIntent.setAction("CLEAR_LIST");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(pushNotificationIntent);
+
             }
         });
 
@@ -136,6 +142,11 @@ public class CreamPreparationAdapter extends RecyclerView.Adapter<CreamPreparati
                     model.setEditTotal(editQty);
                     Log.e("DETAIL MODEL","------------------------------------------"+model);
                     Log.e("TEXT","------------------------------------------"+editQty);
+
+                    Intent pushNotificationIntent = new Intent();
+                    pushNotificationIntent.setAction("CLEAR_LIST");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(pushNotificationIntent);
+
 
                 } catch (Exception e) {
                     float qty = 0;

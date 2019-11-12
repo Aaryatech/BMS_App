@@ -88,10 +88,10 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
     @Override
     public void onBindViewHolder(@NonNull final LayeringCreamAdapter.MyViewHolder myViewHolder, int i) {
         final SfPlanDetailForMixing model=layeringCreamList.get(i);
-        myViewHolder.tvItemName.setText(model.getRmName());
 
         myViewHolder.tvQty.setText(""+model.getTotal()/1000);
-        myViewHolder.edEditQty.setText(""+model.getProdQty());
+        //myViewHolder.tvEditQty.setText(""+model.getProdQty()+"  "+ model.getUom());
+        myViewHolder.tvEditQty.setText(""+model.getProdQty());
         myViewHolder.tvUOM.setText(""+model.getUom());
 
         Log.e("Decimal","--------------------------------------------------"+model.getTotal()/1000);
@@ -99,10 +99,12 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("RM");
+          //  myViewHolder.tvType.setText("RM");
+            myViewHolder.tvItemName.setText(model.getRmName()+"(RM)");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("SF");
+          //  myViewHolder.tvType.setText("SF");
+            myViewHolder.tvItemName.setText(model.getRmName()+"(SF)");
         }
         if(model.getDoubleCut()==1.0)
         {
@@ -117,7 +119,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
         myViewHolder.btnBOM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String strProd=myViewHolder.edEditQty.getText().toString().trim();
+                String strProd=myViewHolder.tvEditQty.getText().toString().trim();
                 
                 if(strProd.equalsIgnoreCase("0.0"))
                 {
@@ -258,7 +260,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvItemName,tvType,tvQty,tvUOM;
+        public TextView tvItemName,tvType,tvQty,tvUOM,tvEditQty;
         public EditText edEditQty;
         public Button btnBOM;
         public MyViewHolder(@NonNull View itemView) {
@@ -266,7 +268,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
             tvItemName=itemView.findViewById(R.id.tvItemName);
             tvType=itemView.findViewById(R.id.tvType);
             tvQty=itemView.findViewById(R.id.tvQty);
-            edEditQty=itemView.findViewById(R.id.edEditQty);
+            tvEditQty=itemView.findViewById(R.id.edEditQty);
             tvUOM=itemView.findViewById(R.id.tvUOM);
             btnBOM=itemView.findViewById(R.id.btnBOM);
         }
@@ -412,9 +414,6 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 
-
-                    // SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-
                     SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
 
                     Date FromDate = null;
@@ -453,7 +452,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
         LayaringDetailAdapter mAdapter;
         ProdPlanHeader prodPlanHeader;
         List<SfPlanDetailForMixing> itemDetailList;
-        float totalamount=0;
+        //float totalamount=0;
 
 
 
@@ -494,7 +493,8 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
           // showDetailItemLayering(prodPlanHeader.getProductionHeaderId(),model.getRmId(),toId);
             try {
                 tvItem.setText("Item : " + model.getRmName());
-                tvQty.setText("Prep Qty : " + total);
+                String totalVal = String.format("%.3f", total);
+                tvQty.setText("Prep Qty : " + totalVal);
                 tvProdId.setText("Prod Id : " + prodPlanHeader.getProductionHeaderId());
                // edEditQty.setText("" + model.getProdQty());
                 mAdapter.notifyDataSetChanged();
@@ -506,19 +506,24 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
             checkbox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    float totalamount=0;
                     if(isChecked)
                     {
-                        float total=0;
                         Log.e("LIST","------------------------"+itemDetailList);
                         for(int k=0;k<itemDetailList.size();k++) {
-                            Log.e("LIST SET", "------------------------" + itemDetailList.get(k));
-                            itemDetailList.get(k).setChecked(true);
-                           // mAdapter.notifyDataSetChanged();
 
-                            totalamount+=itemDetailList.get(k).getTotal();
-                            //itemDetailList.get(k).setProdQty(totalamount);
-                            String no = String.format("%.3f", totalamount);
-                            edEditQty.setText(""+no);
+                            Log.e("LIST DOUBLE", "------------------------------------" + itemDetailList.get(k).getDoubleCut());
+                            if(itemDetailList.get(k).getDoubleCut()==1.0)
+                            {
+                                itemDetailList.get(k).setChecked(false);
+
+                            }else{
+                                itemDetailList.get(k).setChecked(true);
+                                totalamount+=itemDetailList.get(k).getTotal();
+                                String no = String.format("%.3f", totalamount);
+                                edEditQty.setText(""+no);
+                            }
+                            Log.e("LIST SET", "----------------------------------------------" + itemDetailList.get(k));
 
                         }
                     }else{
@@ -526,13 +531,14 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                         {
                             Log.e("LIST SET","------------------------"+itemDetailList.get(k));
                             itemDetailList.get(k).setChecked(false);
-                           // mAdapter.notifyDataSetChanged();
-                            totalamount-=itemDetailList.get(k).getTotal();
-                           // itemDetailList.get(k).setProdQty(totalamount);
-                            String no = String.format("%.3f", totalamount);
-                            edEditQty.setText(""+no);
+
+                            //totalamount-=itemDetailList.get(k).getTotal();
+                            //String no = String.format("%.3f", totalamount);
+                            edEditQty.setText(""+totalamount);
 
                         }
+
+
                     }
 
                     mAdapter = new LayaringDetailAdapter(itemDetailList,context,model,edEditQty);
@@ -773,7 +779,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                             Toast.makeText(context, "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             MainActivity activity=(MainActivity)context;
                             FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new LayeringCreamFragment(), "MainFragment");
+                            ft.replace(R.id.content_frame, new LayeringCreamFragment(), "BMSListFragment");
                             ft.commit();
                             commonDialog1.dismiss();
 

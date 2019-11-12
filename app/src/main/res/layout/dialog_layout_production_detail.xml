@@ -10,25 +10,56 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1.4"
+                android:fontFamily="@font/sf_ui_bold"
+                android:padding="5dp"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/sf_ui_bold"
+                android:gravity="end"
+                android:textSize="15sp"
+                android:padding="5dp"
+                android:textColor="@color/colorPrimaryDark" />
+
+
+        </LinearLayout>
+
     <TextView
-        android:id="@+id/tv_heading"
+        android:id="@+id/tvDept"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:layout_marginTop="10dp"
         android:fontFamily="@font/sf_ui_bold"
-        android:gravity="center"
+        android:gravity="start"
         android:padding="5dp"
-        android:text="Production Detail"
+        android:text=""
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp" />
+        android:textSize="15sp" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@color/colorSelected"
+        android:padding="5dp"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal">
 
         <TextView
@@ -37,20 +68,24 @@
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center"
+            android:textColor="@color/colorWhite"
             android:text="Item Name" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/colorWhite"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center"
+            android:visibility="gone"
             android:text="Type" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/colorWhite"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center"
             android:text="Qty" />
@@ -59,6 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/colorWhite"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center"
             android:text="Edit Qty" />
@@ -69,6 +105,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
         android:layout_below="@+id/linearLayout"
         android:layout_above="@id/linearLayoutButton" />
 
@@ -76,6 +113,7 @@
         android:id="@+id/linearLayoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:orientation="horizontal">
 
         <Button

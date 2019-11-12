@@ -15,4 +15,19 @@
         android:title="Filter"
         android:visible="false"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_logout"
+        android:title=""
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_Name"
+        android:orderInCategory="100"
+        android:title=""
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

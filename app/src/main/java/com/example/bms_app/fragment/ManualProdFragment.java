@@ -479,7 +479,7 @@ Login loginUser;
                             Log.e("SAVE MIXING : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
                             Toast.makeText(getActivity(), "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new MainFragment(), "MainFragment");
+                            ft.replace(R.id.content_frame, new BMSListFragment(), "BMSListFragment");
                             ft.commit();
                             commonDialog1.dismiss();
 

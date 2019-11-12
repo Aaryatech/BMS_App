@@ -273,6 +273,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
         public Button btnPdf,btnAddProd;
         public ImageView ivClose;
         public RecyclerView recyclerView;
+        public TextView tvDate,tvNo,tvDept;
         private ProductionMixingDetailAdapter mAdapter;
         ProdPlanHeader prodPlanHeader;
         String dept;
@@ -306,6 +307,19 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
             ivClose = (ImageView) findViewById(R.id.ivClose);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
+            tvDate = (TextView) findViewById(R.id.tvDate);
+            tvNo = (TextView) findViewById(R.id.tvNo);
+            tvDept = (TextView) findViewById(R.id.tvDept);
+
+            try{
+                tvDate.setText("Prod Date : "+prodPlanHeader.getProductionDate());
+                tvNo.setText("Prod No : "+prodPlanHeader.getProductionHeaderId());
+                tvDept.setText("Dept : "+"PROD-MIX");
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
 
             ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -328,12 +342,18 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 @Override
                 public void onClick(View view) {
                    dismiss();
-                    for(int i=0;i<detailList.size();i++) {
-                        TempMixing model = new TempMixing(0, 0,detailList.get(i).getRmId(),detailList.get(i).getTotal(),prodPlanHeader.getProductionHeaderId());
-                        tempMixingDetailList.add(model);
-                    }
 
-                    saveTempMixing(tempMixingDetailList,prodPlanHeader);
+                    if(detailList.size()==0)
+                    {
+                        Toast.makeText(context, "Detail is empty...", Toast.LENGTH_SHORT).show();
+                    }else {
+                        for (int i = 0; i < detailList.size(); i++) {
+                            TempMixing model = new TempMixing(0, 0, detailList.get(i).getRmId(), detailList.get(i).getTotal(), prodPlanHeader.getProductionHeaderId());
+                            tempMixingDetailList.add(model);
+                        }
+
+                        saveTempMixing(tempMixingDetailList, prodPlanHeader);
+                    }
 
                 }
             });
@@ -735,6 +755,41 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 pt.addCell(cell);
 
 
+
+
+
+                PdfPTable ptDate = new PdfPTable(4);
+                float[] colWidth = new float[]{17, 40, 50, 25};
+                ptDate.setWidths(colWidth);
+                ptDate.setTotalWidth(colWidth);
+                ptDate.setWidthPercentage(100);
+
+                cell = new PdfPCell(new Paragraph("Prod No: ", boldFont));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(0);
+                //cell.setColspan(1);
+                ptDate.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("" +prodPlanHeader.getProductionHeaderId()));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(0);
+                cell.setColspan(1);
+                ptDate.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("Date: ", boldFont));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(2);
+                cell.setColspan(1);
+                ptDate.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("" + prodPlanHeader.getProductionDate(), boldFont));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(2);
+                cell.setColspan(1);
+                ptDate.addCell(cell);
+
+
+
                 PdfPTable pTable = new PdfPTable(1);
                 pTable.setWidthPercentage(100);
 
@@ -751,10 +806,22 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 cell.addElement(ptHead);
                 pTable.addCell(cell);
 
-                PdfPTable table = new PdfPTable(7);
-                float[] columnWidth = new float[]{10, 30, 30, 30, 30,30,30};
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setColspan(1);
+                cell.addElement(ptDate);
+                pTable.addCell(cell);
+
+                PdfPTable table = new PdfPTable(5);
+                float[] columnWidth = new float[]{10, 30, 30, 30, 30};
                 table.setWidths(columnWidth);
                 table.setTotalWidth(columnWidth);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBackgroundColor(myColor);
+                cell.setColspan(7);
+                cell.addElement(pTable);
 
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
@@ -776,20 +843,11 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 table.addCell(cell);
 
 
-                cell = new PdfPCell(new Phrase("Original Qty", boldTextFont));
-                cell.setBackgroundColor(myColor1);
-                cell.setHorizontalAlignment(1);
-                table.addCell(cell);
-
-                cell = new PdfPCell(new Phrase("Multipl Factor", boldTextFont));
-                cell.setBackgroundColor(myColor1);
-                cell.setHorizontalAlignment(1);
-                table.addCell(cell);
-
                 cell = new PdfPCell(new Phrase("Auto Order Qty", boldTextFont));
                 cell.setBackgroundColor(myColor1);
                 cell.setHorizontalAlignment(1);
                 table.addCell(cell);
+
 
                 cell = new PdfPCell(new Phrase("Received Qty", boldTextFont));
                 cell.setBackgroundColor(myColor1);
@@ -814,20 +872,8 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getMulFactor()));
-                    cell.setHorizontalAlignment(2);
-                    cell.setBackgroundColor(myColor);
-                    table.addCell(cell);
 
-                    float qty=detailList.get(i).getTotal()*detailList.get(i).getMulFactor();
-
-                    cell = new PdfPCell(new Phrase("" +qty));
-                    cell.setHorizontalAlignment(2);
-                    cell.setBackgroundColor(myColor);
-                    table.addCell(cell);
-
-
-                    cell = new PdfPCell(new Phrase("" + qty));
+                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getTotal()));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);

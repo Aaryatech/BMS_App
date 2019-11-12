@@ -22,15 +22,16 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bms_app.BuildConfig;
 import com.example.bms_app.R;
 import com.example.bms_app.constants.Constants;
-import com.example.bms_app.model.BillOfAllMaterialHeader;
-import com.example.bms_app.model.BillOfMaterialDetailed;
-import com.example.bms_app.model.BillOfMaterialHeader;
+import com.example.bms_app.model.MixingDetailList;
+import com.example.bms_app.model.MixingDetailed;
+import com.example.bms_app.model.MixingHeaderList;
 import com.example.bms_app.utils.CommonDialog;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -54,12 +55,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdapter.MyViewHolder> {
+public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProductionListAdapter.MyViewHolder> {
 
-    private List<BillOfAllMaterialHeader> reqAllList;
-    private List<BillOfMaterialDetailed> detailList = new ArrayList<>();
-    BillOfMaterialHeader billOfMaterialHeader;
+    private List<MixingHeaderList> mixingList;
     private Context context;
+    private List<MixingDetailed> detailList = new ArrayList<>();
 
     //------PDF------
     private PdfPCell cell;
@@ -73,8 +73,8 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
     BaseColor myColor = WebColors.getRGBColor("#ffffff");
     BaseColor myColor1 = WebColors.getRGBColor("#cbccce");
 
-    public RequestForAllAdapter(List<BillOfAllMaterialHeader> reqAllList, Context context) {
-        this.reqAllList = reqAllList;
+    public BMSProductionListAdapter(List<MixingHeaderList> mixingList, Context context) {
+        this.mixingList = mixingList;
         this.context = context;
 
         dir = new File(Environment.getExternalStorageDirectory() + File.separator, "BMS" + File.separator + "Report");
@@ -82,100 +82,136 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
             dir.mkdirs();
         }
 
-//        path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/BMS/Report";
-//        dir = new File(path);
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//        }
     }
+
+
 
     @NonNull
     @Override
-    public RequestForAllAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public BMSProductionListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.show_all_request, viewGroup, false);
+                .inflate(R.layout.layout_mixing_production_list_adapter, viewGroup, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RequestForAllAdapter.MyViewHolder myViewHolder, int i) {
-        final BillOfAllMaterialHeader model=reqAllList.get(i);
+    public void onBindViewHolder(@NonNull BMSProductionListAdapter.MyViewHolder myViewHolder, int i) {
+        final MixingHeaderList model=mixingList.get(i);
+        myViewHolder.tvProductId.setText("Prod Id : "+model.getProductionId());
+        myViewHolder.tvDate.setText(""+model.getMixDate());
 
-        Log.e("ADAPTER LIST","-------------------------------------------------------"+reqAllList);
 
-        myViewHolder.tvProductId.setText(""+model.getProductionId());
-        myViewHolder.tvDate.setText(""+model.getReqDate());
-        myViewHolder.tvDept.setText(""+model.getToDeptName());
-
-        try {
-            if(model.getStatus()==0)
-            {
-                myViewHolder.tvStatus.setText("Pending");
-            }else if(model.getStatus()==1)
-            {
-                myViewHolder.tvStatus.setText("Approved");
-            }if(model.getStatus()==2)
-            {
-                myViewHolder.tvStatus.setText("Rejected");
-            }if(model.getStatus()==3)
-            {
-                myViewHolder.tvStatus.setText("Approved Rejected");
-            }if(model.getStatus()==4)
-            {
-                myViewHolder.tvStatus.setText("Request Close");
-            }
-
-        }catch (Exception e)
+        if(model.getExInt1()==10)
         {
-            e.printStackTrace();
+            myViewHolder.tvDept.setText("MIX");
+        }else if(model.getExInt1()==11)
+        {
+            myViewHolder.tvDept.setText("BMS");
         }
 
+        if(model.getStatus()==1) {
+            myViewHolder.tvStatus.setText("Add From Plan");
+        }else if(model.getStatus()==2)
+        {
+            myViewHolder.tvStatus.setText("Add From Production");
+        }else if(model.getStatus()==3)
+        {
+            myViewHolder.tvStatus.setText("Start Production");
+        }else if(model.getStatus()==4)
+        {
+            myViewHolder.tvStatus.setText("Production Completed");
+        }else if(model.getStatus()==5)
+        {
+            myViewHolder.tvStatus.setText("Closed");
+        }
 
         myViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getAllProductionDetail(model.getReqId(),model);
-              //  new DeptDialog(context,model,detailList).show();
+                getMixingDetail(model.getMixId(),model);
+                // new DeptDialog(context,model).show();
             }
         });
+    }
+
+    private void getMixingDetail(Integer mixId, final MixingHeaderList model) {
+        Log.e("PARAMETER","                 MIX ID     "+mixId  +"               MIXING HEADER LIST           "+model);
+        if (Constants.isOnline(context)) {
+            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<MixingDetailList> listCall = Constants.myInterface.getDetailedwithMixId(mixId);
+            listCall.enqueue(new Callback<MixingDetailList>() {
+                @Override
+                public void onResponse(Call<MixingDetailList> call, Response<MixingDetailList> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("PRODUCTION DETAIL: ", " - " + response.body());
+                            detailList.clear();
+                            detailList=response.body().getMixingDetailed();
+                            new DeptDialog(context,model).show();
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                            Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception Detail  : ", "-----------" + e.getMessage());
+                        Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MixingDetailList> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return reqAllList.size();
+        return mixingList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvProductId,tvStatus,tvDate,tvDept;
+        public TextView tvProductId,tvDate,tvStatus,tvDept;
         public CardView cardView;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvProductId=itemView.findViewById(R.id.tvProductId);
-            tvStatus=itemView.findViewById(R.id.tvStatus);
             tvDate=itemView.findViewById(R.id.tvDate);
             tvDept=itemView.findViewById(R.id.tvDept);
+            tvStatus=itemView.findViewById(R.id.tvStatus);
             cardView=itemView.findViewById(R.id.cardView);
         }
     }
 
+
     private class DeptDialog extends Dialog {
-        public Button btnCancel,btnPdf;
-        public RecyclerView recyclerView;
-        private AllProductionDetailAdapter mAdapter;
+        public Button btnPdf,btnCancel;
+        public ImageView ivClose;
         public TextView tvDate,tvNo,tvDept;
-        private List<BillOfMaterialDetailed> detailList = new ArrayList<>();
-        //ProdPlanHeader prodDetail;
-        // int productionHeaderId;
-        BillOfAllMaterialHeader billOfAllMaterialHeader;
+        public RecyclerView recyclerView;
+        private ProductionMixingDetailListAdapter mAdapter;
+        MixingHeaderList mixingHeaderList;
+        String dept;
 
-
-
-        public DeptDialog(Context context,BillOfAllMaterialHeader billOfAllMaterialHeader, List<BillOfMaterialDetailed> detailList) {
+        public DeptDialog(Context context, MixingHeaderList mixingHeaderList) {
             super(context);
-            this.billOfAllMaterialHeader=billOfAllMaterialHeader;
-            this.detailList=detailList;
+            this.mixingHeaderList=mixingHeaderList;
 
         }
 
@@ -184,7 +220,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
             super.onCreate(savedInstanceState);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setTitle("Filter");
-            setContentView(R.layout.dialog_layout_all_production);
+            setContentView(R.layout.dialog_production_mixing_list);
             setCancelable(false);
 
             Window window = getWindow();
@@ -197,6 +233,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
 
             btnPdf = (Button) findViewById(R.id.btnPdf);
             btnCancel = (Button) findViewById(R.id.btnCancel);
+            ivClose =(ImageView) findViewById(R.id.ivClose);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
             tvDate = (TextView) findViewById(R.id.tvDate);
@@ -204,47 +241,51 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
             tvDept = (TextView) findViewById(R.id.tvDept);
 
             try{
-                tvDate.setText("Prod Date : "+billOfAllMaterialHeader.getProductionDate());
-                tvNo.setText("Prod No : "+billOfAllMaterialHeader.getProductionId());
-                tvDept.setText("Dept : "+"PROD-MIX");
+                tvDate.setText("Prod Date : "+mixingHeaderList.getMixDate());
+                tvNo.setText("Prod No : "+mixingHeaderList.getProductionId());
+                tvDept.setText("Dept : "+"PROD-BMS");
             }catch (Exception e)
             {
                 e.printStackTrace();
             }
 
 
+            ivClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
             btnCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(View v) {
                     dismiss();
                 }
             });
 
             btnPdf.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    createAllRequestPDF(detailList,billOfAllMaterialHeader);
+                public void onClick(View view) {
+
+                    // dismiss();
+                    createMixingPDF(detailList,mixingHeaderList);
+
                 }
             });
 
-//            if (billOfMaterialHeader.getBillOfMaterialDetailed() != null) {
-//                billOfMaterialHeader.getBillOfMaterialDetailed().clear();
-//                for (int i = 0; i < billOfMaterialHeader.getBillOfMaterialDetailed().size(); i++) {
-//                    detailList.add(billOfMaterialHeader.getBillOfMaterialDetailed().get(i));
-//                }
-                Log.e("Detail List Dialog","----------------------------------------"+detailList);
-                mAdapter = new AllProductionDetailAdapter(detailList, context);
-                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
-                recyclerView.setLayoutManager(mLayoutManager);
-                recyclerView.setItemAnimator(new DefaultItemAnimator());
-                recyclerView.setAdapter(mAdapter);
-           // }
+
+            mAdapter = new ProductionMixingDetailListAdapter(detailList,context);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(mAdapter);
 
         }
 
     }
 
-    private void createAllRequestPDF(List<BillOfMaterialDetailed> detailList,BillOfAllMaterialHeader billOfAllMaterialHeader) {
+    private void createMixingPDF(List<MixingDetailed> detailList, MixingHeaderList mixingHeaderList) {
         final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
         commonDialog.show();
 
@@ -266,7 +307,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
             int minutes = calendar.get(Calendar.MINUTE);
             dateInMillis = calendar.getTimeInMillis();
 
-            String fileName = "Show_all_Request_Report_" + billOfAllMaterialHeader.getProductionId() + ".pdf";
+            String fileName = "Production_Mixing_Report_" + mixingHeaderList.getMixId() + ".pdf";
             file = new File(dir, fileName);
 
             FileOutputStream fOut = new FileOutputStream(file);
@@ -305,7 +346,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
                 cell.setHorizontalAlignment(1);
                 pt.addCell(cell);
 
-                cell = new PdfPCell(new Paragraph("Report-Request to BMS", boldFont));
+                cell = new PdfPCell(new Paragraph("Report-Mixing Request", boldFont));
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setHorizontalAlignment(1);
                 pt.addCell(cell);
@@ -323,7 +364,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
                 //cell.setColspan(1);
                 ptDate.addCell(cell);
 
-                cell = new PdfPCell(new Paragraph("" +billOfAllMaterialHeader.getProductionId()));
+                cell = new PdfPCell(new Paragraph("" +mixingHeaderList.getProductionId()));
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setHorizontalAlignment(0);
                 cell.setColspan(1);
@@ -335,8 +376,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
                 cell.setColspan(1);
                 ptDate.addCell(cell);
 
-
-                cell = new PdfPCell(new Paragraph("" + billOfAllMaterialHeader.getProductionDate(), boldFont));
+                cell = new PdfPCell(new Paragraph("" + mixingHeaderList.getMixDate(), boldFont));
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setHorizontalAlignment(2);
                 cell.setColspan(1);
@@ -353,16 +393,11 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
                 pTable.addCell(cell);
 
 
-
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setColspan(1);
                 cell.addElement(ptHead);
                 pTable.addCell(cell);
-
-
-//                PdfPTable pTable1 = new PdfPTable(1);
-//                pTable1.setWidthPercentage(100);
 
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
@@ -370,22 +405,21 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
                 cell.addElement(ptDate);
                 pTable.addCell(cell);
 
-
-                PdfPTable table = new PdfPTable(5);
-                float[] columnWidth = new float[]{10, 30, 30, 30, 30};
+                PdfPTable table = new PdfPTable(4);
+                float[] columnWidth = new float[]{10, 30, 30, 30};
                 table.setWidths(columnWidth);
                 table.setTotalWidth(columnWidth);
 
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setBackgroundColor(myColor);
-                cell.setColspan(6);
+                cell.setColspan(7);
                 cell.addElement(pTable);
 
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
                 cell.setBackgroundColor(myColor);
-                cell.setColspan(6);
+                cell.setColspan(7);
                 cell.addElement(pTable);
 
                 table.addCell(cell);//image cell&address
@@ -396,31 +430,21 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
                 table.addCell(cell);
 
 
-                cell = new PdfPCell(new Phrase("Item Name", boldTextFont));
+                cell = new PdfPCell(new Phrase("SF Name", boldTextFont));
                 cell.setBackgroundColor(myColor1);
                 cell.setHorizontalAlignment(1);
                 table.addCell(cell);
 
 
-                cell = new PdfPCell(new Phrase("Requested Qty", boldTextFont));
+                cell = new PdfPCell(new Phrase("Received Qty", boldTextFont));
                 cell.setBackgroundColor(myColor1);
                 cell.setHorizontalAlignment(1);
                 table.addCell(cell);
 
-                cell = new PdfPCell(new Phrase("Single Cut", boldTextFont));
+                cell = new PdfPCell(new Phrase("Production Qty", boldTextFont));
                 cell.setBackgroundColor(myColor1);
                 cell.setHorizontalAlignment(1);
                 table.addCell(cell);
-
-                cell = new PdfPCell(new Phrase("Double Cut", boldTextFont));
-                cell.setBackgroundColor(myColor1);
-                cell.setHorizontalAlignment(1);
-                table.addCell(cell);
-
-//                cell = new PdfPCell(new Phrase("Issue Qty", boldTextFont));
-//                cell.setBackgroundColor(myColor1);
-//                cell.setHorizontalAlignment(1);
-//                table.addCell(cell);
 
 
                 float total = 0;
@@ -428,34 +452,20 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
 
                     table.addCell("" + (i + 1));
 
-                    table.addCell("" + detailList.get(i).getRmName());
+                    table.addCell("" + detailList.get(i).getSfName());
 
-
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getRmReqQty()));
+                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getReceivedQty()));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getExVarchar1()));
+                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getProductionQty()));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
-
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getExVarchar2()));
-                    cell.setHorizontalAlignment(2);
-                    cell.setBackgroundColor(myColor);
-                    table.addCell(cell);
-
-
-//                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getRmIssueQty()));
-//                    cell.setHorizontalAlignment(2);
-//                    cell.setBackgroundColor(myColor);
-//                    table.addCell(cell);
 
 
                 }
-
-
 
                 PdfPTable table2 = new PdfPTable(3);
                 float[] columnWidth2 = new float[]{60, 50, 50};
@@ -480,7 +490,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
 //                paragraph.setAlignment(c);
 //                doc.add(new Paragraph("Vital1"));
 
-               // doc.add(ptDate);
+                //doc.add(pt);
                 doc.add(table);
                 //doc.add(table2);
 
@@ -524,55 +534,6 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
             Log.e("Mytag","--------------------"+e);
             Toast.makeText(context, "Unable To Generate", Toast.LENGTH_SHORT).show();
         }
-
-    }
-
-    private void getAllProductionDetail(Integer reqId, final BillOfAllMaterialHeader model) {
-        Log.e("PARAMETER","                 REQ ID     "+reqId );
-        if (Constants.isOnline(context)) {
-            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-            commonDialog.show();
-
-            Call<BillOfMaterialHeader> listCall = Constants.myInterface.getDetailedwithreqId(reqId);
-            listCall.enqueue(new Callback<BillOfMaterialHeader>() {
-                @Override
-                public void onResponse(Call<BillOfMaterialHeader> call, Response<BillOfMaterialHeader> response) {
-                    try {
-                        if (response.body() != null) {
-
-                            Log.e("PRODUCTION DETAIL: ", " - " + response.body());
-                           // detailList.clear();
-                           // detailList=response.body();
-                            billOfMaterialHeader=response.body();
-                            detailList=response.body().getBillOfMaterialDetailed();
-                            new DeptDialog(context,model,detailList).show();
-                            commonDialog.dismiss();
-
-                        } else {
-                            commonDialog.dismiss();
-                            Log.e("Data Null : ", "-----------");
-                            Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        commonDialog.dismiss();
-                        Log.e("Exception Detail  : ", "-----------" + e.getMessage());
-                        Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<BillOfMaterialHeader> call, Throwable t) {
-                    commonDialog.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                    t.printStackTrace();
-                }
-            });
-        } else {
-            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-
     }
 
 }

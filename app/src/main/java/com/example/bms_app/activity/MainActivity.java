@@ -25,8 +25,10 @@ import com.example.bms_app.R;
 import com.example.bms_app.adapter.ExpandableListAdapter;
 import com.example.bms_app.constants.Constants;
 import com.example.bms_app.fragment.BMSListFragment;
+import com.example.bms_app.fragment.BMSProductionFragment;
 import com.example.bms_app.fragment.CotingCreamFragment;
 import com.example.bms_app.fragment.CreamPreparationFragment;
+import com.example.bms_app.fragment.IssueFromBMSFragment;
 import com.example.bms_app.fragment.IssusFragment;
 import com.example.bms_app.fragment.LayeringCreamFragment;
 import com.example.bms_app.fragment.MainFragment;
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
     private List<FrItemStockConfigure> frItemStockConfiguresList;
-    Login loginUser;
+    public Login loginUser;
     int bmsId=0,mixId=0;
     String bmsName,mixName;
     @Override
@@ -286,6 +288,8 @@ public class MainActivity extends AppCompatActivity
                 homeFragment instanceof MixingProductionFragment && homeFragment.isVisible() ||
                 homeFragment instanceof MixingProductionListFragment && homeFragment.isVisible() ||
                 homeFragment instanceof MixingStockFragment && homeFragment.isVisible() ||
+                homeFragment instanceof BMSProductionFragment && homeFragment.isVisible() ||
+                homeFragment instanceof IssueFromBMSFragment && homeFragment.isVisible() ||
                 homeFragment instanceof BMSListFragment && homeFragment.isVisible()) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, new MainFragment(), "Exit");
@@ -348,7 +352,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     private void prepareMenuData() {
 
 //        MenuModel menuModel = new MenuModel("Android WebView Tutorial", true, false, "https://www.journaldev.com/9333/android-webview-example-tutorial"); //Menu of Android Tutorial. No sub menus
@@ -357,53 +360,80 @@ public class MainActivity extends AppCompatActivity
 //        if (!menuModel.hasChildren) {
 //            childList.put(menuModel, null);
 //        }
-
-        MenuModel  menuModel = new MenuModel("Production Department", true, true, ""); //Menu of Java Tutorials
-        headerList.add(menuModel);
         List<MenuModel> childModelsList = new ArrayList<>();
-        MenuModel childModel = new MenuModel("Request for Mixing", false, false, "Request for Mixing");
-        childModelsList.add(childModel);
+        MenuModel menuModel;
+        MenuModel childModel;
 
-        childModel = new MenuModel("Request for Stored", false, false, "Request for Stored");
-        childModelsList.add(childModel);
-
-        childModel = new MenuModel("Show all Request", false, false, "Show all Request");
-        childModelsList.add(childModel);
-
-
-        if (menuModel.hasChildren) {
-            Log.d("API123","here");
-            childList.put(menuModel, childModelsList);
+        Login login = null;
+        try {
+            String userStr = CustomSharedPreference.getString(this, CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            login = gson.fromJson(userStr, Login.class);
+            Log.e("HOME_ACTIVITY : ", "--------USER-------" + loginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
-        childModelsList = new ArrayList<>();
-        menuModel = new MenuModel("Mixing Department", true, true, "Mixing Department"); //Menu of Python Tutorials
-        headerList.add(menuModel);
-        childModel = new MenuModel("Show Request BOM", false, false, "Show Request BOM");
-        childModelsList.add(childModel);
+        Log.e("LOGIN","-----------------------------------------------USER---------------------------------"+loginUser);
 
-        childModel = new MenuModel("Mixing Production", false, false, "Mixing Production");
-        childModelsList.add(childModel);
+      //  if(login.getUser().getDeptId()==16 || login.getUser().getDeptId()==9 || login.getUser().getDeptId()==10 ) {
+             menuModel = new MenuModel("Production Department", true, true, ""); //Menu of Java Tutorials
+            headerList.add(menuModel);
 
-        childModel = new MenuModel("Mixing Production List", false, false, "Mixing Production List");
-        childModelsList.add(childModel);
+             childModel = new MenuModel("Request for Mixing", false, false, "Request for Mixing");
+            childModelsList.add(childModel);
 
-        childModel = new MenuModel("Mixing Stock", false, false, "Mixing Stock");
-        childModelsList.add(childModel);
+            childModel = new MenuModel("Request for Stored", false, false, "Request for Stored");
+            childModelsList.add(childModel);
 
-        if (menuModel.hasChildren) {
-            childList.put(menuModel, childModelsList);
-        }
+            childModel = new MenuModel("Show all Request", false, false, "Show all Request");
+            childModelsList.add(childModel);
 
-        childModelsList = new ArrayList<>();
-        menuModel = new MenuModel("BMS Department", true, true, "BMS Department"); //Menu of Python Tutorials
-        headerList.add(menuModel);
 
-        childModel = new MenuModel("Set for Production", false, false, "Set for Production");
-        childModelsList.add(childModel);
+            if (menuModel.hasChildren) {
+                Log.d("API123", "here");
+                childList.put(menuModel, childModelsList);
+            }
+    //   }
 
-        childModel = new MenuModel("BMS Stock", false, false, "BMS Stock");
-        childModelsList.add(childModel);
+       // if(login.getUser().getDeptId()==16 || login.getUser().getDeptId()==9 || login.getUser().getDeptId()==10 ) {
+            childModelsList = new ArrayList<>();
+            menuModel = new MenuModel("Mixing Department", true, true, "Mixing Department"); //Menu of Python Tutorials
+            headerList.add(menuModel);
+            childModel = new MenuModel("Request from Production", false, false, "Request from Production");
+            childModelsList.add(childModel);
+
+            childModel = new MenuModel("Add Mixing", false, false, "Add Mixing");
+            childModelsList.add(childModel);
+
+            childModel = new MenuModel("Mixing Production List", false, false, "Mixing Production List");
+            childModelsList.add(childModel);
+
+            childModel = new MenuModel("Mixing Stock", false, false, "Mixing Stock");
+            childModelsList.add(childModel);
+
+            if (menuModel.hasChildren) {
+                childList.put(menuModel, childModelsList);
+            }
+      //  }
+       // if(login.getUser().getDeptId()==16 || login.getUser().getDeptId()==11 ) {
+            childModelsList = new ArrayList<>();
+            menuModel = new MenuModel("BMS Department", true, true, "BMS Department"); //Menu of Python Tutorials
+            headerList.add(menuModel);
+
+            childModel = new MenuModel("Add BMS Production", false, false, "Add BMS Production");
+            childModelsList.add(childModel);
+
+             childModel = new MenuModel("BMS Production List", false, false, "BMS Production List");
+             childModelsList.add(childModel);
+
+             childModel = new MenuModel("Issue from BMS", false, false, "Issue from BMS");
+             childModelsList.add(childModel);
+
+             childModel = new MenuModel("BMS Stock", false, false, "BMS Stock");
+            childModelsList.add(childModel);
+
 //
 //        childModel = new MenuModel("Layering Cream Production", false, false, "Layering Cream Production");
 //        childModelsList.add(childModel);
@@ -417,9 +447,10 @@ public class MainActivity extends AppCompatActivity
 //        childModel = new MenuModel("Manual Production", false, false, "Manual Production");
 //        childModelsList.add(childModel);
 
-        if (menuModel.hasChildren) {
-            childList.put(menuModel, childModelsList);
-        }
+            if (menuModel.hasChildren) {
+                childList.put(menuModel, childModelsList);
+            }
+       // }
 
         childModelsList = new ArrayList<>();
         menuModel = new MenuModel("Logout", true, true, "Logout"); //Menu of Python Tutorials
@@ -490,14 +521,14 @@ public class MainActivity extends AppCompatActivity
                         args.putString("slugName", model.getUrl());
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Show Request BOM"))
+                    }if(model.getUrl().equalsIgnoreCase("Request from Production"))
                     {
                         Fragment adf = new ShowRequestBOMFragment();
                         Bundle args = new Bundle();
                         args.putString("slugName", model.getUrl());
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Mixing Production"))
+                    }if(model.getUrl().equalsIgnoreCase("Add Mixing"))
                     {
                         Fragment adf = new MixingProductionFragment();
                         Bundle args = new Bundle();
@@ -511,7 +542,7 @@ public class MainActivity extends AppCompatActivity
                         args.putString("slugName", model.getUrl());
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-                    }if(model.getUrl().equalsIgnoreCase("Set for Production"))
+                    }if(model.getUrl().equalsIgnoreCase("Add BMS Production"))
                     {
                         Fragment adf = new BMSListFragment();
                         Bundle args = new Bundle();
@@ -537,21 +568,23 @@ public class MainActivity extends AppCompatActivity
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
                     }
-//                    if(model.getUrl().equalsIgnoreCase("Layering Cream Production"))
-//                    {
-//                        Fragment adf = new LayeringCreamFragment();
-//                        Bundle args = new Bundle();
-//                        args.putString("slugName", model.getUrl());
-//                        adf.setArguments(args);
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-//                    }if(model.getUrl().equalsIgnoreCase("Issues from BMS"))
-//                    {
-//                        Fragment adf = new IssusFragment();
-//                        Bundle args = new Bundle();
-//                        args.putString("slugName", model.getUrl());
-//                        adf.setArguments(args);
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-//                    }if(model.getUrl().equalsIgnoreCase("Manual Production"))
+                    if(model.getUrl().equalsIgnoreCase("BMS Production List"))
+                    {
+                        Fragment adf = new BMSProductionFragment();
+                        Bundle args = new Bundle();
+                        args.putString("slugName", model.getUrl());
+                        adf.setArguments(args);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
+                    }
+                    if(model.getUrl().equalsIgnoreCase("Issue from BMS"))
+                    {
+                        Fragment adf = new IssueFromBMSFragment();
+                        Bundle args = new Bundle();
+                        args.putString("slugName", model.getUrl());
+                        adf.setArguments(args);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
+                    }
+//                    if(model.getUrl().equalsIgnoreCase("Manual Production"))
 //                    {
 //                        Fragment adf = new ManualProdFragment();
 //                        Bundle args = new Bundle();

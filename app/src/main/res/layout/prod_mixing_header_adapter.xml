@@ -44,7 +44,7 @@
                 android:fontFamily="@font/sf_ui_bold"
                 android:text="Pending"
                 android:gravity="end"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="15sp" />
         </LinearLayout>
 

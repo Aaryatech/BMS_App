@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="5dp">
 
     <!--<LinearLayout-->
     <!--android:layout_width="match_parent"-->
@@ -52,16 +52,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
+        android:padding="5dp"
         android:background="@color/colorWhite"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvName"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="start"
             android:text="0" />
 
         <TextView
@@ -69,17 +71,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:visibility="gone"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="end"
             android:text="10" />
 
         <TextView
             android:id="@+id/tvReqQty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="end"
             android:text="2" />
 
 
@@ -88,18 +91,18 @@
             android:id="@+id/tvSingleCut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="end"
             android:text="2" />
 
         <TextView
             android:id="@+id/tvDoubleCut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="end"
             android:text="2" />
 
         <EditText
@@ -108,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:drawable/editbox_background_normal"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
             android:text="0" />

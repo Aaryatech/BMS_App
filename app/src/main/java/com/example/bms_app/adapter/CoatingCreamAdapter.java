@@ -429,7 +429,7 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
                             Toast.makeText(context, "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             MainActivity activity=(MainActivity)context;
                             FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new CotingCreamFragment(), "MainFragment");
+                            ft.replace(R.id.content_frame, new CotingCreamFragment(), "BMSListFragment");
                             ft.commit();
                             commonDialog1.dismiss();
 

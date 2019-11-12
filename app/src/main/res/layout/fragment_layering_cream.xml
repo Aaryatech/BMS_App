@@ -25,7 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="1"
+                    android:layout_weight="1.3"
                     android:fontFamily="@font/sf_ui_bold"
                     android:padding="5dp"
                     android:textSize="15sp"
@@ -48,7 +48,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:background="@color/colorPrimary"
                 android:orientation="horizontal">
 
@@ -91,6 +92,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:text="UOM"
                     android:textColor="@color/colorWhite" />
 

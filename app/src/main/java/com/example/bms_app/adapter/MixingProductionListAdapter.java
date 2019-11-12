@@ -96,9 +96,17 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
     @Override
     public void onBindViewHolder(@NonNull MixingProductionListAdapter.MyViewHolder myViewHolder, int i) {
         final MixingHeaderList model=mixingList.get(i);
-        myViewHolder.tvProductId.setText(""+model.getProductionId());
+        myViewHolder.tvProductId.setText("Prod Id : "+model.getProductionId());
         myViewHolder.tvDate.setText(""+model.getMixDate());
 
+
+        if(model.getExInt1()==10)
+        {
+            myViewHolder.tvDept.setText("MIX");
+        }else if(model.getExInt1()==11)
+        {
+            myViewHolder.tvDept.setText("BMS");
+        }
 
         if(model.getStatus()==1) {
             myViewHolder.tvStatus.setText("Add From Plan");
@@ -177,12 +185,13 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvProductId,tvDate,tvStatus;
+        public TextView tvProductId,tvDate,tvStatus,tvDept;
         public CardView cardView;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvProductId=itemView.findViewById(R.id.tvProductId);
             tvDate=itemView.findViewById(R.id.tvDate);
+            tvDept=itemView.findViewById(R.id.tvDept);
             tvStatus=itemView.findViewById(R.id.tvStatus);
             cardView=itemView.findViewById(R.id.cardView);
         }
@@ -191,6 +200,7 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
     private class DeptDialog extends Dialog {
         public Button btnPdf,btnCancel;
         public ImageView ivClose;
+        public TextView tvDate,tvNo,tvDept;
         public RecyclerView recyclerView;
         private ProductionMixingDetailListAdapter mAdapter;
         MixingHeaderList mixingHeaderList;
@@ -222,6 +232,19 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
             btnCancel = (Button) findViewById(R.id.btnCancel);
             ivClose =(ImageView) findViewById(R.id.ivClose);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+            tvDate = (TextView) findViewById(R.id.tvDate);
+            tvNo = (TextView) findViewById(R.id.tvNo);
+            tvDept = (TextView) findViewById(R.id.tvDept);
+
+            try{
+                tvDate.setText("Prod Date : "+mixingHeaderList.getMixDate());
+                tvNo.setText("Prod No : "+mixingHeaderList.getProductionId());
+                tvDept.setText("Dept : "+"PROD-MIX");
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
 
             ivClose.setOnClickListener(new View.OnClickListener() {
@@ -326,6 +349,37 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
                 pt.addCell(cell);
 
 
+                PdfPTable ptDate = new PdfPTable(4);
+                float[] colWidth = new float[]{17, 40, 50, 25};
+                ptDate.setWidths(colWidth);
+                ptDate.setTotalWidth(colWidth);
+                ptDate.setWidthPercentage(100);
+
+                cell = new PdfPCell(new Paragraph("Prod No: ", boldFont));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(0);
+                //cell.setColspan(1);
+                ptDate.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("" +mixingHeaderList.getProductionId()));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(0);
+                cell.setColspan(1);
+                ptDate.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("Date: ", boldFont));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(2);
+                cell.setColspan(1);
+                ptDate.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("" + mixingHeaderList.getMixDate(), boldFont));
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(2);
+                cell.setColspan(1);
+                ptDate.addCell(cell);
+
+
                 PdfPTable pTable = new PdfPTable(1);
                 pTable.setWidthPercentage(100);
 
@@ -342,10 +396,22 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
                 cell.addElement(ptHead);
                 pTable.addCell(cell);
 
-                PdfPTable table = new PdfPTable(7);
-                float[] columnWidth = new float[]{10, 30, 30, 30, 30,30,30};
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setColspan(1);
+                cell.addElement(ptDate);
+                pTable.addCell(cell);
+
+                PdfPTable table = new PdfPTable(4);
+                float[] columnWidth = new float[]{10, 30, 30, 30};
                 table.setWidths(columnWidth);
                 table.setTotalWidth(columnWidth);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBackgroundColor(myColor);
+                cell.setColspan(7);
+                cell.addElement(pTable);
 
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
@@ -367,21 +433,6 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
                 table.addCell(cell);
 
 
-                cell = new PdfPCell(new Phrase("Original Qty", boldTextFont));
-                cell.setBackgroundColor(myColor1);
-                cell.setHorizontalAlignment(1);
-                table.addCell(cell);
-
-                cell = new PdfPCell(new Phrase("Multipl Factor", boldTextFont));
-                cell.setBackgroundColor(myColor1);
-                cell.setHorizontalAlignment(1);
-                table.addCell(cell);
-
-                cell = new PdfPCell(new Phrase("Auto Order Qty", boldTextFont));
-                cell.setBackgroundColor(myColor1);
-                cell.setHorizontalAlignment(1);
-                table.addCell(cell);
-
                 cell = new PdfPCell(new Phrase("Received Qty", boldTextFont));
                 cell.setBackgroundColor(myColor1);
                 cell.setHorizontalAlignment(1);
@@ -400,23 +451,6 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
 
                     table.addCell("" + detailList.get(i).getSfName());
 
-
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getOriginalQty()));
-                    cell.setHorizontalAlignment(2);
-                    cell.setBackgroundColor(myColor);
-                    table.addCell(cell);
-
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getExVarchar1()));
-                    cell.setHorizontalAlignment(2);
-                    cell.setBackgroundColor(myColor);
-                    table.addCell(cell);
-
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getAutoOrderQty()));
-                    cell.setHorizontalAlignment(2);
-                    cell.setBackgroundColor(myColor);
-                    table.addCell(cell);
-
-
                     cell = new PdfPCell(new Phrase("" + detailList.get(i).getReceivedQty()));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
@@ -429,8 +463,6 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
 
 
                 }
-
-
 
                 PdfPTable table2 = new PdfPTable(3);
                 float[] columnWidth2 = new float[]{60, 50, 50};

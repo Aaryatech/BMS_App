@@ -12,16 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
+        android:padding="5dp"
         android:background="@color/colorWhite"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvRmName"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="start"
             android:text="0" />
 
         <TextView
@@ -29,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:visibility="gone"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
             android:text="10" />
@@ -38,6 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:visibility="gone"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
             android:text="2" />
@@ -56,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:background="@android:drawable/editbox_background_normal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
@@ -66,9 +70,9 @@
             android:id="@+id/tvUnit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.1"
+            android:layout_weight="1.3"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="end"
             android:text="2" />
 
     </LinearLayout>

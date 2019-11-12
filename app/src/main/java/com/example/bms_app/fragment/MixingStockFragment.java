@@ -65,7 +65,7 @@ public Button btnSearch;
 public RecyclerView recyclerView;
 public Button btnDayEndProcess;
 public TextView tvDate;
-
+    int typeId = 0;
 
 public TextView tvFromMonth,tvToMonth;
 public EditText edFromMonth,edToMonth;
@@ -146,21 +146,10 @@ public EditText edFromDate,edToDate;
             Log.e("Exception","------------------------------"+e);
         }
 
-        if(strDept==10)
-        {
-            typeArray.add("Semi Finished");
-        }else if(strDept==11)
-        {
-            typeArray.add("Raw Material");
-            typeArray.add("Semi Finished");
-        }
-
-        final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.support_simple_spinner_dropdown_item, typeArray);
-        spType.setAdapter(spinnerAdapter);
 
         optionArray.add("Select Option");
         optionArray.add("Get Current Stock");
-        optionArray.add("Get Stock Between Month");
+       // optionArray.add("Get Stock Between Month");
         optionArray.add("Get Stock Between Date");
 
 
@@ -193,6 +182,23 @@ public EditText edFromDate,edToDate;
 
             }
         });
+
+        if(strDept==10)
+        {
+            spOption.setSelection(1);
+            typeArray.add("Semi Finished");
+            getBmsStockHeaderRaw(0,2,strDept);
+        }else if(strDept==11)
+        {
+            spOption.setSelection(1);
+            typeArray.add("Raw Material");
+            typeArray.add("Semi Finished");
+            getBmsStockHeader(0,1,strDept);
+
+        }
+
+        final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.support_simple_spinner_dropdown_item, typeArray);
+        spType.setAdapter(spinnerAdapter);
 
         edFromMonth.setOnClickListener(this);
         edToMonth.setOnClickListener(this);
@@ -244,6 +250,18 @@ public EditText edFromDate,edToDate;
             dialog.show();
         } else if(v.getId()==R.id.edFromDate)
         {
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+           // String strDate=tvDate.getText().toString().trim();
+            String strDate=stock.getBmsStockDate();
+            Log.e("Date","------------------------FROM--------------------------------"+strDate);
+            Date dateEnd = null;
+
+            try {
+                dateEnd = formatter1.parse(strDate);//catch exception
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Log.e("Date","------------------------FROM- DATE-------------------------------"+dateEnd);
             int yr, mn, dy;
             if (fromDateMillis > 0) {
                 Calendar purchaseCal = Calendar.getInstance();
@@ -259,28 +277,46 @@ public EditText edFromDate,edToDate;
             }
             DatePickerDialog dialog = new DatePickerDialog(getContext(), fromDateListener, yr, mn, dy);
             // dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            dialog.getDatePicker().setMaxDate(dateEnd.getTime());
             dialog.show();
         }else if(v.getId()==R.id.edToDate)
         {
             int yr, mn, dy;
-            if (fromDateMillis > 0) {
-                Calendar purchaseCal = Calendar.getInstance();
-                purchaseCal.setTimeInMillis(fromDateMillis);
-                yr = purchaseCal.get(Calendar.YEAR);
-                mn = purchaseCal.get(Calendar.MONTH);
-                dy = purchaseCal.get(Calendar.DAY_OF_MONTH);
-            } else {
-                Calendar purchaseCal = Calendar.getInstance();
-                yr = purchaseCal.get(Calendar.YEAR);
-                mn = purchaseCal.get(Calendar.MONTH);
-                dy = purchaseCal.get(Calendar.DAY_OF_MONTH);
+            Calendar purchaseCal;
+
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+            String fromDate = edFromDate.getText().toString().trim();
+           // String strDate=tvDate.getText().toString().trim();
+            String strDate=stock.getBmsStockDate();
+            Log.e("Date","------------------------TO--------------------------------"+strDate);
+            Date fromdate = null;
+
+            try {
+                fromdate = formatter1.parse(fromDate);//catch exception
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
+
+            Date dateEnd = null;
+
+            try {
+                dateEnd = formatter1.parse(strDate);//catch exception
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Log.e("Date","------------------------TO- DATE-------------------------------"+dateEnd);
+            purchaseCal = Calendar.getInstance();
+            yr = purchaseCal.get(Calendar.YEAR);
+            mn = purchaseCal.get(Calendar.MONTH);
+            dy = purchaseCal.get(Calendar.DAY_OF_MONTH);
+
             DatePickerDialog dialog = new DatePickerDialog(getContext(), toDateListener, yr, mn, dy);
-            // dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+           // dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            dialog.getDatePicker().setMaxDate(dateEnd.getTime());
+            dialog.getDatePicker().setMinDate(fromdate.getTime());
             dialog.show();
         }else if(v.getId()==R.id.btnSearch)
         {
-            int typeId = 0;;
            // int typeId = spType.getSelectedItemPosition();
             int optionId = spOption.getSelectedItemPosition();
             String strFromDate=edFromDate.getText().toString().trim();
@@ -291,6 +327,7 @@ public EditText edFromDate,edToDate;
             if(strDept==10)
             {
                  typeId =2;
+
 
             }else if(strDept==11)
             {
@@ -306,18 +343,20 @@ public EditText edFromDate,edToDate;
             {
                 Log.e("TYPE2","-----------------------------------"+typeId);
                 getBmsStockHeaderRaw(0,2,strDept);
-            }else if(typeId==1 && optionId==3)
+            }else if(typeId==1 && optionId==2)
             {
+                Log.e("TYPE2","------------------RM-----------------"+optionId);
                 getBmsStockRMBetDate(strFromDate,strToDate);
-            }else if(typeId==2 && optionId==3)
+            }else if(typeId==2 && optionId==2)
             {
+                Log.e("TYPE2","------------------SF-----------------"+optionId);
                 getBmsStockSFBetDate(strFromDate,strToDate);
             }
 
         }else if(v.getId()==R.id.btnDayEndProcess)
         {
-            int typeId = spType.getSelectedItemPosition();
-            if(typeId==0)
+           // int typeId = spType.getSelectedItemPosition();
+            if(typeId==1)
             {
                for(int i=0;i<stockList.size();i++)
                {
@@ -358,7 +397,7 @@ public EditText edFromDate,edToDate;
 
                 BmsStockHeader bmsStockHeader1=new BmsStockHeader(0,stDate,0,stock.getRmType(),strDept,0,0,0,"",bmsStockDetailList);
                 insertBmsStock1(bmsStockHeader1);
-            }else if(typeId==1)
+            }else if(typeId==2)
             {
                 for(int i=0;i<stockSFList.size();i++)
                 {
@@ -868,7 +907,7 @@ public EditText edFromDate,edToDate;
 
                             SimpleDateFormat dfDate = new SimpleDateFormat("dd-MM-yyyy");
 
-                            if (dfDate.parse(dfDate.format(System.currentTimeMillis())).after(dfDate.parse(stock.getBmsStockDate()))){
+                            if (dfDate.parse(dfDate.format(System.currentTimeMillis())).compareTo(dfDate.parse(stock.getBmsStockDate())) >=0){
                                 btnDayEndProcess.setVisibility(View.VISIBLE);
                                 Log.e("DATE : ", " -----------------------------------------DATE VISIBLE--------------------- ");
 
@@ -876,7 +915,6 @@ public EditText edFromDate,edToDate;
                                 btnDayEndProcess.setVisibility(View.GONE);
                                 Log.e("DATE : ", " -----------------------------------------DATE GONE--------------------- ");
                             }
-
 
 
 //                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -993,7 +1031,7 @@ public EditText edFromDate,edToDate;
                             tvDate.setText("Stock Date : "+stock.getBmsStockDate());
                             Log.e("STOCK RESPONCE : ", " -----------------------------------------Bin---------------------- " + stock);
 
-                    SimpleDateFormat dfDate = new SimpleDateFormat("dd-MM-yyyy");
+                        SimpleDateFormat dfDate = new SimpleDateFormat("dd-MM-yyyy");
 
                      if (dfDate.parse(dfDate.format(System.currentTimeMillis())).after(dfDate.parse(stock.getBmsStockDate()))){
                          btnDayEndProcess.setVisibility(View.VISIBLE);

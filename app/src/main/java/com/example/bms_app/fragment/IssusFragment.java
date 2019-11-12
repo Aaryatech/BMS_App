@@ -129,7 +129,7 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
                     getSfDetailsForIssue(0,0,"");
                     tvItemId.setText("");
                     tvItem.setText("");
-
+                    itemList.clear();
                     /*-----------------------------------------------------------  */
 
 
@@ -142,7 +142,7 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
                     getSfDetailsForIssue(0,0,"");
                     tvItemId.setText("");
                     tvItem.setText("");
-
+                    itemList.clear();
                     /*-----------------------------------------------------------  */
                 }
             }
@@ -452,7 +452,7 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
                             Log.e("HEADER : ", " ------------------------------SAVE ISSUES HEADER------------------------ " + response.body());
                             Toast.makeText(getActivity(), "Issue Added Successfully....", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new MainFragment(), "MainFragment");
+                            ft.replace(R.id.content_frame, new BMSListFragment(), "BMSListFragment");
                             ft.commit();
                             commonDialog.dismiss();
 
@@ -736,9 +736,15 @@ public class IssusFragment extends Fragment implements View.OnClickListener{
                 public void onClick(View view) {
 
                     dialog.dismiss();
+
+                    /*   -----------------------------Clear  Item---------------------------- */
+
                     getSfDetailsForIssue(0,0,"");
                     tvItemId.setText("");
                     tvItem.setText("");
+                    itemList.clear();
+
+                    /*   ------------------------------------------------------------------------------------------- */
                     tvGroup.setText(""+model.getMiniCatName());
                     tvGroupId.setText(""+model.getMiniCatId());
                     groupId= Integer.parseInt(tvGroupId.getText().toString());

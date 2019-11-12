@@ -164,6 +164,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
         public Button btnSubmit,btnCancel;
         public RecyclerView recyclerView;
         private ProductionDetailAdapter mAdapter;
+        public TextView tvDate,tvNo,tvDept;
         //ProdPlanHeader prodDetail;
         // int productionHeaderId;
         ProdPlanHeader prodPlanHeader;
@@ -195,7 +196,20 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
             btnCancel = (Button) findViewById(R.id.btnCancel);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-           // getProductionSetting(dept,prodPlanHeader.getProductionHeaderId());
+            tvDate = (TextView) findViewById(R.id.tvDate);
+            tvNo = (TextView) findViewById(R.id.tvNo);
+            tvDept = (TextView) findViewById(R.id.tvDept);
+
+
+            try{
+                tvDate.setText("Prod Date : "+prodPlanHeader.getProductionDate());
+                tvNo.setText("Prod No : "+prodPlanHeader.getProductionHeaderId());
+                tvDept.setText("Dept : "+"PROD-STORE");
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            // getProductionSetting(dept,prodPlanHeader.getProductionHeaderId());
             getSettingValue("PROD");
 
             btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -243,7 +257,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
             if (detailList != null) {
                 billDetailList.clear();
                 for (int i = 0; i < detailList.size(); i++) {
-                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,0,detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getRmQty(),detailList.get(i).getRmQty(),0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
+                    BillOfMaterialDetailed billOfMaterialDetailed=new BillOfMaterialDetailed(0,0,detailList.get(i).getRmType(),detailList.get(i).getRmId(),detailList.get(i).getRmName(),detailList.get(i).getUom(),detailList.get(i).getTotal(),0,0,0,String.valueOf(detailList.get(i).getSingleCut()),String.valueOf(detailList.get(i).getDoubleCut()),"",0,0,0,detailList.get(i).getTotal(),0,0);
                     billDetailList.add(billOfMaterialDetailed);
                 }
 
@@ -561,7 +575,12 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
                             Log.e("PRODUCTION DETAIL: ", " - " + response.body());
                             detailList.clear();
                             detailList=response.body().getSfPlanDetailForMixing();
-                            new DeptDialog(context,model,dept).show();
+                            if(detailList.size()==0)
+                            {
+                                Toast.makeText(context, "Detail is empty...", Toast.LENGTH_SHORT).show();
+                            }else {
+                                new DeptDialog(context, model, dept).show();
+                            }
                             commonDialog.dismiss();
 
                         } else {

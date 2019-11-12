@@ -52,16 +52,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
+        android:padding="5dp"
         android:background="@color/colorWhite"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvItemName"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="start"
             android:text="0" />
 
         <TextView
@@ -71,6 +73,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
+            android:visibility="gone"
             android:text="10" />
 
         <TextView
@@ -90,7 +93,7 @@
             android:background="@android:drawable/editbox_background_normal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:text="0" />
 
     </LinearLayout>

@@ -10,36 +10,56 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
         <LinearLayout
-            android:id="@+id/llHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tv_heading"
+                android:id="@+id/tvNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_weight="1.4"
                 android:fontFamily="@font/sf_ui_bold"
                 android:padding="5dp"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:text="Request for BOM Detail"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp" />
+                android:fontFamily="@font/sf_ui_bold"
+                android:gravity="end"
+                android:textSize="15sp"
+                android:padding="5dp"
+                android:textColor="@color/colorPrimaryDark" />
 
             <ImageView
                 android:id="@+id/ivClose"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:visibility="gone"
                 android:layout_marginRight="10dp"
                 android:src="@drawable/ic_close" />
 
+
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/sf_ui_bold"
+            android:gravity="start"
+            android:padding="5dp"
+            android:text=""
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15sp" />
 
 
         <LinearLayout
@@ -47,13 +67,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@color/colorSelected"
+            android:background="@color/colorPrimary"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="Name" />
@@ -62,6 +83,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="Auto Req Qty" />
@@ -72,7 +95,8 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
-                android:text="Req Qty" />
+                android:text="Req Qty"
+                android:textColor="@color/colorWhite" />
 
 
 
@@ -80,6 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="Single Cut" />
@@ -88,6 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="Double Cut" />
@@ -96,6 +122,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center"
                 android:text="Issue Qty" />
@@ -113,6 +140,7 @@
             android:id="@+id/linearLayoutButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="10dp"
             android:orientation="horizontal">
 
             <Button
@@ -124,7 +152,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
                 android:layout_marginBottom="10dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:text="Cancel"
                 android:textColor="@color/colorWhite" />
 

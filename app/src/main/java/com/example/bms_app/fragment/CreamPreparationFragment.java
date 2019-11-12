@@ -1,10 +1,15 @@
 package com.example.bms_app.fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -69,13 +74,15 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
     private Button btnAdd,btnSubmit;
     private CheckBox checkbox;
 
+    private BroadcastReceiver broadcastReceiver;
+
     ArrayList<TempMixing> tempMixingDetailList = new ArrayList<>();
     private List<TempMixItemDetail> mixDetailList = new ArrayList<>();
     ArrayList<MixingDetailedSave> mixList = new ArrayList<>();
     ArrayList<BillOfMaterialDetailed> billDetailList = new ArrayList<>();
     int fromId=0,toId=0;
     String fromName,toName;
-    List<SfItemDetail> sfItemTempList = new ArrayList<>();
+   List<SfItemDetail> sfItemTempList = new ArrayList<>();
     Login loginUser;
     PostProductionPlanHeader postProductionPlanHeader;
 
@@ -138,6 +145,10 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                         Log.e("LIST SET","------------------------"+detailList.get(k));
                         detailList.get(k).setChecked(true);
 
+                        Intent pushNotificationIntent = new Intent();
+                        pushNotificationIntent.setAction("CLEAR_LIST");
+                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(pushNotificationIntent);
+
                     }
                 }else{
                     for(int k=0;k<detailList.size();k++)
@@ -145,7 +156,13 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                         Log.e("LIST SET","------------------------"+detailList.get(k));
                         detailList.get(k).setChecked(false);
 
+                        Intent pushNotificationIntent = new Intent();
+                        pushNotificationIntent.setAction("CLEAR_LIST");
+                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(pushNotificationIntent);
+
                     }
+
+
                 }
 
                 adapter = new CreamPreparationAdapter(detailList, getContext());
@@ -159,6 +176,15 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
 
         btnAdd.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("CLEAR_LIST")) {
+                    handlePushNotification(intent);
+                }
+            }
+        };
 
         return view;
     }
@@ -410,7 +436,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                             Log.e("SAVE MIXING : ", " ------------------------------SAVE  MIXING------------------------ " + response.body());
                             Toast.makeText(getActivity(), "Record Submitted Successfully....", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new CreamPreparationFragment(), "MainFragment");
+                            ft.replace(R.id.content_frame, new CreamPreparationFragment(), "BMSListFragment");
                             ft.commit();
                             commonDialog1.dismiss();
 
@@ -680,6 +706,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                             Log.e("LIST : ", " ----------------------LIST ----------------------- " + sfItemDetailList);
                             Log.e("LIST : ", " ----------------------LIST TEMP----------------------- " + sfItemTempList);
 
+
                             // Log.e("DATA : ", "--------------------------DATA---------------------------"+sfItemTempList);
                             adapter1 = new CreamPreparationDetailAdapter(sfItemTempList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -713,5 +740,29 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
             Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
+                new IntentFilter("CLEAR_LIST"));
+    }
+
+
+    private void handlePushNotification(Intent intent) {
+        sfItemTempList.clear();
+        adapter1 = new CreamPreparationDetailAdapter(sfItemTempList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerViewDetail.setLayoutManager(mLayoutManager);
+        recyclerViewDetail.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewDetail.setAdapter(adapter1);
     }
 }

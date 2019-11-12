@@ -67,14 +67,25 @@
         android:layout_height="55dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="250dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:clickable="true"
         android:background="@drawable/circle_pink"
         android:text="Issue"
         android:gravity="center"
         android:textSize="14sp"
         android:textColor="#ffffff"
         android:visibility="invisible"/>
+
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginEnd="@dimen/fab_margin"-->
+    <!--android:layout_marginBottom="250dp"-->
+    <!--android:background="@drawable/circle_pink"-->
+    <!--android:text="Issue"-->
+    <!--android:gravity="center"-->
+    <!--android:textSize="14sp"-->
+    <!--android:textColor="#ffffff"-->
 
 
     <TextView
@@ -83,14 +94,25 @@
         android:layout_height="55dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="300dp"
+        android:layout_marginRight="150dp"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:clickable="true"
         android:background="@drawable/circle_pink"
         android:text="MP"
         android:gravity="center"
         android:textSize="14sp"
         android:textColor="#ffffff"
         android:visibility="invisible" />
+
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginEnd="@dimen/fab_margin"-->
+    <!--android:layout_marginBottom="300dp"-->
+    <!--android:background="@drawable/circle_pink"-->
+    <!--android:text="MP"-->
+    <!--android:gravity="center"-->
+    <!--android:textSize="14sp"-->
+    <!--android:textColor="#ffffff"-->
 
 
     <android.support.design.widget.FloatingActionButton

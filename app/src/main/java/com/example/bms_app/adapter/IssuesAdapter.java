@@ -38,17 +38,19 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssuesAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull IssuesAdapter.MyViewHolder myViewHolder, int i) {
         final SfPlanDetailForMixing model=issuesList.get(i);
-        myViewHolder.tvItemName.setText(model.getRmName());
+
         myViewHolder.tvQty.setText(""+model.getTotal()/1000);
         myViewHolder.tvUOM.setText(model.getUom());
-        myViewHolder.edEditQty.setText(""+model.getTotal()/1000);
+       // myViewHolder.edEditQty.setText(""+model.getTotal()/1000);
 
         if(model.getRmType()==1)
         {
-            myViewHolder.tvType.setText("RM");
+            //myViewHolder.tvType.setText("RM");
+            myViewHolder.tvItemName.setText(model.getRmName()+"(RM)");
         }else if(model.getRmType()==2)
         {
-            myViewHolder.tvType.setText("SF");
+          //  myViewHolder.tvType.setText("SF");
+            myViewHolder.tvItemName.setText(model.getRmName()+"(SF)");
         }
 
         myViewHolder.edEditQty.addTextChangedListener(new TextWatcher() {

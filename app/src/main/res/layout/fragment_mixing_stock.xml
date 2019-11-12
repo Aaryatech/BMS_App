@@ -289,7 +289,7 @@
     <LinearLayout
         android:id="@+id/linearLayoutHoriz"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:layout_below="@id/linearLayout"
         android:layout_marginTop="20dp"
@@ -313,7 +313,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center"
-            android:text="Opening Stock"
+            android:text="Op.St"
             android:textColor="@color/colorWhite" />
 
         <TextView
@@ -343,7 +343,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center"
-            android:text="Closing Qty"
+            android:text="Cl.Qty"
             android:textColor="@color/colorWhite" />
 
     </LinearLayout>

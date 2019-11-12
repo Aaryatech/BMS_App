@@ -124,6 +124,7 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
         public RecyclerView recyclerView;
         public ImageView ivClose;
         private AllBomRequestAdapter mAdapter;
+        public TextView tvDate,tvNo,tvDept;
         private List<BillOfMaterialDetailed> detailList = new ArrayList<>();
         //ProdPlanHeader prodDetail;
         // int productionHeaderId;
@@ -160,6 +161,19 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
             btnCancel = (Button) findViewById(R.id.btnCancel);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
+            tvDate = (TextView) findViewById(R.id.tvDate);
+            tvNo = (TextView) findViewById(R.id.tvNo);
+            tvDept = (TextView) findViewById(R.id.tvDept);
+
+            try{
+                tvDate.setText("Prod Date : "+billOfAllMaterialHeader.getProductionDate());
+                tvNo.setText("Prod No : "+billOfAllMaterialHeader.getProductionId());
+                tvDept.setText("Dept : "+"PROD-MIX");
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
             if(billOfAllMaterialHeader.getStatus()==0)
             {
                 btnSubmit.setVisibility(View.VISIBLE);
@@ -173,6 +187,7 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
                 btnSubmit.setVisibility(View.GONE);
                 btnAppReject.setVisibility(View.VISIBLE);
                 btnAppReject.setClickable(false);
+                btnAppReject.setBackgroundResource(R.drawable.rounded_corner_light_button);
             }
 
 

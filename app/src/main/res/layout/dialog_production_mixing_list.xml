@@ -10,28 +10,35 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
         <LinearLayout
-            android:id="@+id/llHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tv_heading"
+                android:id="@+id/tvNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_weight="1.2"
                 android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center"
+                android:padding="5dp"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/tvDept"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/sf_ui_bold"
+                android:gravity="end"
                 android:layout_weight="1"
                 android:padding="5dp"
-                android:text="Mixing Production Detail"
+                android:text=""
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
+
 
             <ImageView
                 android:id="@+id/ivClose"
@@ -42,63 +49,82 @@
 
         </LinearLayout>
 
-
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/sf_ui_bold"
+            android:gravity="start"
+            android:textSize="15sp"
+            android:padding="5dp"
+            android:textColor="@color/colorPrimaryDark" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@color/colorSelected"
+            android:padding="10dp"
+            android:background="@color/colorPrimary"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center"
+                android:gravity="start"
                 android:text="SF Name" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center"
+                android:gravity="end"
                 android:text="Original Qty" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center"
+                android:gravity="end"
                 android:text="Multiplication Factor" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center"
+                android:gravity="end"
                 android:text="Auto Order Qty" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center"
-                android:text="Received Qty" />
+                android:gravity="end"
+                android:text="Reciv Qty" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center"
-                android:text="Production Qty" />
+                android:gravity="end"
+                android:text="Prod Qty" />
 
         </LinearLayout>
 
@@ -113,6 +139,7 @@
             android:id="@+id/linearLayoutButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="10dp"
             android:orientation="horizontal">
 
             <Button

@@ -202,9 +202,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
+                android:padding="10dp"
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal">
-
 
                 <TextView
                     android:layout_width="match_parent"
@@ -223,7 +223,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:text="Prod Type"
                     android:textColor="@color/colorWhite" />
 
@@ -244,6 +244,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:text="Edit Qty"
                     android:textColor="@color/colorWhite" />
 

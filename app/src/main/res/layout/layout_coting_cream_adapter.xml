@@ -8,45 +8,6 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:background="@color/colorSelected"-->
-    <!--android:orientation="horizontal">-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Item Name" />-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Type" />-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Qty" />-->
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:fontFamily="@font/sf_ui_regular"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Edit Qty" />-->
-
-    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,6 +60,7 @@
             android:background="@android:drawable/editbox_background_normal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
+            android:visibility="gone"
             android:inputType="none"
             android:enabled="false"
             android:text="0" />

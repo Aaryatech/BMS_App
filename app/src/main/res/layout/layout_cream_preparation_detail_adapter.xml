@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="5dp">
 
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:id="@+id/tvSrNo"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_weight="1.1"
+            android:layout_weight="1.4"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
             android:text="0" />
@@ -29,20 +29,11 @@
             android:id="@+id/tvItemName"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
             android:text="0" />
 
-        <TextView
-            android:id="@+id/tvType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="10" />
 
         <TextView
             android:id="@+id/tvQty"
@@ -58,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:visibility="gone"
             android:background="@android:drawable/editbox_background_normal"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
@@ -69,7 +61,7 @@
             android:id="@+id/tvUOM"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.3"
             android:fontFamily="@font/sf_ui_regular"
             android:gravity="center"
             android:text="2" />
