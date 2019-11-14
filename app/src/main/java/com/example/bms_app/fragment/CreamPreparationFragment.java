@@ -206,7 +206,6 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                             // frItemStockConfiguresList.clear();
                             postProductionPlanHeader=response.body();
 
-
                             commonDialog.dismiss();
 
                         } else {
@@ -402,7 +401,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
                     Log.e("MYTAG", "-----------------------------------DATE------------------------" + prodDate);
                     Log.e("MYTAG", "-----------------------------------PROD ID------------------------" + prodPlanHeader.getProductionHeaderId());
 
-                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(), prodDate, 1, toId, toName, toId, toName, loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), 4, 0, 0, prodPlanHeader.getCatId(), 0, "", "", prodPlanHeader.getIsPlanned(), 0, 0, sdf.format(System.currentTimeMillis()), 0, sdf.format(System.currentTimeMillis()), billDetailList);
+                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(), prodDate, 1, toId, toName, toId, toName, loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), 4, 0, 0, prodPlanHeader.getCatId(), 0, "Cream Preparation", "", prodPlanHeader.getIsPlanned(), 0, 0, sdf.format(System.currentTimeMillis()), 0, sdf.format(System.currentTimeMillis()), billDetailList);
                     saveDetail(billOfMaterialHeader, prodPlanHeader);
                 }else {
                     Toast.makeText(getActivity(), "Please add item first....", Toast.LENGTH_SHORT).show();
@@ -531,7 +530,7 @@ public class CreamPreparationFragment extends Fragment implements View.OnClickLi
 
                             }
                             Log.e("MYTAG","-----------------------------------PROD ID MIX------------------------"+prodPlanHeader.getProductionHeaderId());
-                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,postProductionPlanHeader.getTimeSlot(),1,toId,0,0,"","","",0,mixList);
+                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,postProductionPlanHeader.getTimeSlot(),1,toId,0,0,"","Cream Preparation","",0,mixList);
                             saveMixing(mixingHeaderDetail,prodPlanHeader);
                             commonDialog1.dismiss();
 

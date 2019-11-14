@@ -29,4 +29,5 @@
 
     <color name="colorApproved">#5AAC00</color>
     <color name="colorRejected">#D10000</color>
+    <color name="pinkLight">#faeae9</color>
 </resources>

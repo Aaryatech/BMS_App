@@ -44,6 +44,7 @@ public class RequestForBMSAdapter extends RecyclerView.Adapter<RequestForBMSAdap
         final int pos = i;
         myViewHolder.tvProductId.setText(""+model.getProductionHeaderId());
         myViewHolder.tvDate.setText(model.getProductionDate());
+        myViewHolder.tvCatName.setText(model.getCatName());
       //  myViewHolder.rbSelect.setChecked(i == mSelectedItem);
 
 
@@ -111,7 +112,7 @@ public class RequestForBMSAdapter extends RecyclerView.Adapter<RequestForBMSAdap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvProductId,tvStatus,tvDate,tvIsPlane;
+        public TextView tvProductId,tvStatus,tvDate,tvIsPlane,tvCatName;
         public RadioButton rbSelect;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,6 +121,7 @@ public class RequestForBMSAdapter extends RecyclerView.Adapter<RequestForBMSAdap
             tvDate=itemView.findViewById(R.id.tvDate);
             tvIsPlane=itemView.findViewById(R.id.tvIsPlane);
             rbSelect=itemView.findViewById(R.id.rbSelect);
+            tvCatName=itemView.findViewById(R.id.tvCatName);
 
 //            View.OnClickListener clickListener = new View.OnClickListener() {
 //                @Override

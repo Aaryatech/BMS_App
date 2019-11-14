@@ -91,7 +91,17 @@
 
         </LinearLayout>
 
-
+        <TextView
+            android:id="@+id/tvCatName"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_cat_name"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/sf_ui_regular"
+            android:text="" />
 
     </LinearLayout>
 

@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Production Department :"
-            android:padding="4dp"
+            android:padding="5dp"
             android:visibility="visible"
             android:background="@color/colorPrimary"
             android:fontFamily="@font/sf_ui_bold"
@@ -60,7 +60,7 @@
                             android:layout_gravity="center"
                             android:fontFamily="@font/sf_ui_bold"
                             android:padding="10dp"
-                            android:text="Request Mixing"
+                            android:text="Request for Mixing"
                             android:textColor="@color/colorWhite"
                             android:textSize="14sp" />
 
@@ -92,7 +92,7 @@
                             android:fontFamily="@font/sf_ui_bold"
                             android:padding="10dp"
                             android:gravity="center"
-                            android:text="Request Store"
+                            android:text="Request for Store"
                             android:textColor="@color/colorWhite"
                             android:textSize="14sp" />
 
@@ -135,7 +135,8 @@
                             android:layout_gravity="center"
                             android:fontFamily="@font/sf_ui_bold"
                             android:padding="10dp"
-                            android:text="Request All"
+                            android:gravity="center"
+                            android:text="Show Request All"
                             android:textColor="@color/colorWhite"
                             android:textSize="14sp" />
 
@@ -151,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mixing Department :"
-            android:padding="4dp"
+            android:padding="5dp"
             android:visibility="visible"
             android:background="@color/colorPrimary"
             android:fontFamily="@font/sf_ui_bold"
@@ -311,7 +312,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="BMS Department :"
-            android:padding="4dp"
+            android:padding="5dp"
             android:visibility="visible"
             android:background="@color/colorPrimary"
             android:fontFamily="@font/sf_ui_bold"

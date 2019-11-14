@@ -108,6 +108,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
         myViewHolder.tvDate.setText(""+model.getReqDate());
         myViewHolder.tvDept.setText(""+model.getToDeptName());
 
+
         try {
             if(model.getStatus()==0)
             {
@@ -157,6 +158,7 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
             tvDate=itemView.findViewById(R.id.tvDate);
             tvDept=itemView.findViewById(R.id.tvDept);
             cardView=itemView.findViewById(R.id.cardView);
+
         }
     }
 

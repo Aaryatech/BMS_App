@@ -389,7 +389,7 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
                         Log.e("MYTAG", "-----------------------------------DATE------------------------" + prodDate);
 
 
-                        BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(), prodDate, 1, toId, toName, toId, toName, loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), 4, 0, 0, prodPlanHeader.getCatId(), 0, "", "", prodPlanHeader.getIsPlanned(), 0, 0, sdf.format(System.currentTimeMillis()), 0, sdf.format(System.currentTimeMillis()), billDetailList);
+                        BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(), prodDate, 1, toId, toName, toId, toName, loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), loginUser.getUser().getId(), sdf1.format(System.currentTimeMillis()), 4, 0, 0, prodPlanHeader.getCatId(), 0, "Coting Cream", "", prodPlanHeader.getIsPlanned(), 0, 0, sdf.format(System.currentTimeMillis()), 0, sdf.format(System.currentTimeMillis()), billDetailList);
                         saveDetail(billOfMaterialHeader, model);
 
 //                        TempMixing tempMixing = new TempMixing(0, 0, model.getRmId(), model.getTotal(), prodPlanHeader.getProductionHeaderId());
@@ -525,7 +525,7 @@ public class CoatingCreamAdapter extends RecyclerView.Adapter<CoatingCreamAdapte
                                 mixList.add(mixingDetailedSave);
                           //  }
 
-                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),1,toId,0,0,"","","",0,mixList);
+                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),1,toId,0,0,"","Coting Cream","",0,mixList);
                             saveMixing(mixingHeaderDetail,prodPlanHeader);
 
                             commonDialog1.dismiss();

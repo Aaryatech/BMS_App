@@ -201,7 +201,6 @@ public class IssueFromBMSFragment extends Fragment {
     }
 
 
-
     private void getShowRequestBOM() {
         if (Constants.isOnline(getContext())) {
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
@@ -216,6 +215,7 @@ public class IssueFromBMSFragment extends Fragment {
 
                             Log.e("SHOW REQ BOM LIST : ", " - " + response.body());
                             showAllList.clear();
+                            showAllPendingList.clear();
                             showAllList = response.body().getBillOfAllMaterialHeader();
 
                             // productionList.add(productionDetail);
@@ -311,7 +311,7 @@ public class IssueFromBMSFragment extends Fragment {
 
             Window window = getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
-            wlp.gravity = Gravity.TOP | Gravity.RIGHT;
+            wlp.gravity = Gravity.CENTER | Gravity.RIGHT;
             wlp.x = 10;
             wlp.y = 10;
             wlp.width = WindowManager.LayoutParams.MATCH_PARENT;

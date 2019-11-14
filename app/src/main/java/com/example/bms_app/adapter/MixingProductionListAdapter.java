@@ -433,7 +433,7 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
                 table.addCell(cell);
 
 
-                cell = new PdfPCell(new Phrase("Received Qty", boldTextFont));
+                cell = new PdfPCell(new Phrase("Auto Order Qty", boldTextFont));
                 cell.setBackgroundColor(myColor1);
                 cell.setHorizontalAlignment(1);
                 table.addCell(cell);
@@ -451,16 +451,17 @@ public class MixingProductionListAdapter extends RecyclerView.Adapter<MixingProd
 
                     table.addCell("" + detailList.get(i).getSfName());
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getReceivedQty()));
+                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getAutoOrderQty()));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getProductionQty()));
+                    Double roundOff=Math.ceil(detailList.get(i).getProductionQty());
+
+                    cell = new PdfPCell(new Phrase("" + roundOff));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
-
 
                 }
 

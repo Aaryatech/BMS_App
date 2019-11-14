@@ -87,7 +87,6 @@ public class CotingCreamFragment extends Fragment implements View.OnClickListene
 
         getSettingKey("BMS");
 
-
         return view;
     }
 

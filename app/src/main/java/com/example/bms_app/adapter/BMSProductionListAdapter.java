@@ -17,12 +17,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +63,7 @@ public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProduction
     private List<MixingHeaderList> mixingList;
     private Context context;
     private List<MixingDetailed> detailList = new ArrayList<>();
+    private ProductionMixingDetailListAdapter mAdapter;
 
     //------PDF------
     private PdfPCell cell;
@@ -90,16 +94,18 @@ public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProduction
     @Override
     public BMSProductionListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.layout_mixing_production_list_adapter, viewGroup, false);
+                .inflate(R.layout.layout_bms_production_list, viewGroup, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BMSProductionListAdapter.MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final BMSProductionListAdapter.MyViewHolder myViewHolder, int i) {
         final MixingHeaderList model=mixingList.get(i);
         myViewHolder.tvProductId.setText("Prod Id : "+model.getProductionId());
         myViewHolder.tvDate.setText(""+model.getMixDate());
+        myViewHolder.tvType.setText(""+model.getExVarchar2());
+
 
 
         if(model.getExInt1()==10)
@@ -126,16 +132,77 @@ public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProduction
             myViewHolder.tvStatus.setText("Closed");
         }
 
-        myViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+
+        Log.e("DETAIL LIST","-----------------------------------------ADAPTER--------------------------------"+detailList);
+//        if(detailList!=null) {
+//            mAdapter = new ProductionMixingDetailListAdapter(detailList, context);
+//            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+//            myViewHolder.recyclerView.setLayoutManager(mLayoutManager);
+//            myViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
+//            myViewHolder.recyclerView.setAdapter(mAdapter);
+//        }
+
+        if (model.getVisibleStatus() == 1) {
+            myViewHolder.llItems.setVisibility(View.VISIBLE);
+            myViewHolder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_up));
+        } else {
+            myViewHolder.llItems.setVisibility(View.GONE);
+            myViewHolder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_down));
+        }
+
+        myViewHolder.tvItems.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                getMixingDetail(model.getMixId(),model);
-                // new DeptDialog(context,model).show();
+            public void onClick(View view) {
+
+                if (model.getVisibleStatus() == 0) {
+                    model.setVisibleStatus(1);
+                    myViewHolder.llItems.setVisibility(View.VISIBLE);
+                    myViewHolder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_up));
+                    getMixingDetail(model.getMixId(),model,myViewHolder);
+                } else if (model.getVisibleStatus() == 1) {
+                    model.setVisibleStatus(0);
+                    myViewHolder.llItems.setVisibility(View.GONE);
+                    myViewHolder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_down));
+
+                }
+
             }
         });
+
+        myViewHolder.ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(context, v);
+                popupMenu.getMenuInflater().inflate(R.menu.pdf_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if(menuItem.getItemId() == R.id.action_pdf){
+                            createMixingPDF(detailList,model);
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+
+
+            }
+        });
+
+
+
+//        myViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                getMixingDetail(model.getMixId(),model);
+////                // new DeptDialog(context,model).show();
+////
+////
+////            }
+////        });
     }
 
-    private void getMixingDetail(Integer mixId, final MixingHeaderList model) {
+    private void getMixingDetail(Integer mixId, final MixingHeaderList model, final MyViewHolder myViewHolder) {
         Log.e("PARAMETER","                 MIX ID     "+mixId  +"               MIXING HEADER LIST           "+model);
         if (Constants.isOnline(context)) {
             final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
@@ -151,7 +218,13 @@ public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProduction
                             Log.e("PRODUCTION DETAIL: ", " - " + response.body());
                             detailList.clear();
                             detailList=response.body().getMixingDetailed();
-                            new DeptDialog(context,model).show();
+
+                            mAdapter = new ProductionMixingDetailListAdapter(detailList, context);
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+                            myViewHolder.recyclerView.setLayoutManager(mLayoutManager);
+                            myViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
+                            myViewHolder.recyclerView.setAdapter(mAdapter);
+                           // new DeptDialog(context,model).show();
                             commonDialog.dismiss();
 
                         } else {
@@ -187,15 +260,29 @@ public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProduction
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvProductId,tvDate,tvStatus,tvDept;
+        public TextView tvProductId,tvDate,tvStatus,tvDept,tvType,tvItems;
         public CardView cardView;
+        public RecyclerView recyclerView;
+        public ImageView imageView,ivEdit;
+        public LinearLayout llItems;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvProductId=itemView.findViewById(R.id.tvProductId);
             tvDate=itemView.findViewById(R.id.tvDate);
+            tvType=itemView.findViewById(R.id.tvType);
             tvDept=itemView.findViewById(R.id.tvDept);
             tvStatus=itemView.findViewById(R.id.tvStatus);
             cardView=itemView.findViewById(R.id.cardView);
+
+
+            tvDate = itemView.findViewById(R.id.tvDate);
+            recyclerView = itemView.findViewById(R.id.recyclerView);
+            cardView = itemView.findViewById(R.id.cardView);
+            tvItems = itemView.findViewById(R.id.tvItems);
+            llItems = itemView.findViewById(R.id.llItems);
+            imageView = itemView.findViewById(R.id.imageView);
+            ivEdit = itemView.findViewById(R.id.ivEdit);
         }
     }
 
@@ -436,7 +523,7 @@ public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProduction
                 table.addCell(cell);
 
 
-                cell = new PdfPCell(new Phrase("Received Qty", boldTextFont));
+                cell = new PdfPCell(new Phrase("Auto Order Qty", boldTextFont));
                 cell.setBackgroundColor(myColor1);
                 cell.setHorizontalAlignment(1);
                 table.addCell(cell);
@@ -454,12 +541,14 @@ public class BMSProductionListAdapter extends RecyclerView.Adapter<BMSProduction
 
                     table.addCell("" + detailList.get(i).getSfName());
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getReceivedQty()));
+                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getAutoOrderQty()));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getProductionQty()));
+                    Double roundOff=Math.ceil(detailList.get(i).getProductionQty());
+
+                    cell = new PdfPCell(new Phrase("" + roundOff));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);

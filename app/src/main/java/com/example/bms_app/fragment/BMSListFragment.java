@@ -485,7 +485,7 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
 
             Window window = getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
-            wlp.gravity = Gravity.TOP | Gravity.RIGHT;
+            wlp.gravity = Gravity.CENTER | Gravity.RIGHT;
             wlp.x = 10;
             wlp.y = 10;
             wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -497,7 +497,6 @@ public class BMSListFragment extends Fragment implements View.OnClickListener{
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
             ivClose = findViewById(R.id.ivClose);
-
 
             Date todayDate = Calendar.getInstance().getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

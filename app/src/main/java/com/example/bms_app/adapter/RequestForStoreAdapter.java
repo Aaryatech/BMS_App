@@ -80,6 +80,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
         final ProdPlanHeader model=reqStoreList.get(i);
         myViewHolder.tvProductId.setText(""+model.getProductionHeaderId());
         myViewHolder.tvDate.setText(model.getProductionDate());
+        myViewHolder.tvCatName.setText(model.getCatName());
 
         if(model.getIsPlanned()==1) {
             myViewHolder.tvIsPlane.setText("Yes");
@@ -146,7 +147,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvProductId,tvStatus,tvDate,tvIsPlane;
+        public TextView tvProductId,tvStatus,tvDate,tvIsPlane,tvCatName;
         public TextView tvMixing,tvStore;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -155,6 +156,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
             tvStatus=itemView.findViewById(R.id.tvStatus);
             tvDate=itemView.findViewById(R.id.tvDate);
             tvIsPlane=itemView.findViewById(R.id.tvIsPlane);
+            tvCatName=itemView.findViewById(R.id.tvCatName);
 
             tvMixing=itemView.findViewById(R.id.ivMixing);
             tvStore=itemView.findViewById(R.id.ivStore);

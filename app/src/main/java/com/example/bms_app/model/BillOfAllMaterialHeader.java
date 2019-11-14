@@ -82,6 +82,7 @@ public class BillOfAllMaterialHeader {
     @SerializedName("rejApproveDate")
     @Expose
     private String rejApproveDate;
+    int visibleStatus;
 
     public Integer getReqId() {
         return reqId;
@@ -291,6 +292,14 @@ public class BillOfAllMaterialHeader {
         this.rejApproveDate = rejApproveDate;
     }
 
+    public int getVisibleStatus() {
+        return visibleStatus;
+    }
+
+    public void setVisibleStatus(int visibleStatus) {
+        this.visibleStatus = visibleStatus;
+    }
+
     @Override
     public String toString() {
         return "BillOfAllMaterialHeader{" +
@@ -317,9 +326,10 @@ public class BillOfAllMaterialHeader {
                 ", isPlan=" + isPlan +
                 ", isManual=" + isManual +
                 ", rejUserId=" + rejUserId +
-                ", rejDate=" + rejDate +
+                ", rejDate='" + rejDate + '\'' +
                 ", rejApproveUserId=" + rejApproveUserId +
-                ", rejApproveDate=" + rejApproveDate +
+                ", rejApproveDate='" + rejApproveDate + '\'' +
+                ", visibleStatus=" + visibleStatus +
                 '}';
     }
 }

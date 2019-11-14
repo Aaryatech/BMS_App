@@ -295,7 +295,7 @@ String bmsName,mixName;
             case R.id.action_Name:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                 builder.setTitle("Logout");
-                builder.setMessage("Are you sure you want to logout?");
+                builder.setMessage("Are you sure ! you want to logout?");
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

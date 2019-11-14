@@ -109,11 +109,13 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
         if(model.getDoubleCut()==1.0)
         {
             Log.e("False","---------------------------------"+model.getDoubleCut());
-            myViewHolder.btnBOM.setClickable(false);
+            myViewHolder.btnBOM.setEnabled(false);
+            myViewHolder.btnBOM.setBackgroundResource(R.drawable.rounded_corner_light_button);
         }else if(model.getDoubleCut()==0.0)
         {
             Log.e("True","---------------------------------"+model.getDoubleCut());
-            myViewHolder.btnBOM.setClickable(true);
+            myViewHolder.btnBOM.setEnabled(true);
+            myViewHolder.btnBOM.setBackgroundResource(R.drawable.rounded_corner_button);
         }
 
         myViewHolder.btnBOM.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +124,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                 String strProd=myViewHolder.tvEditQty.getText().toString().trim();
                 
                 if(strProd.equalsIgnoreCase("0.0"))
+                //if(strProd.equalsIgnoreCase("-"))
                 {
                     Toast.makeText(context, "Qty should be greater than 0", Toast.LENGTH_SHORT).show();
                 }else {
@@ -426,7 +429,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                     String prodDate = sdf1.format(FromDate);
                     Log.e("MYTAG","-----------------------------------DATE------------------------"+prodDate);
 
-                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),prodDate,1,toId,toName,toId,toName,loginUser.getUser().getId(),sdf1.format(System.currentTimeMillis()),loginUser.getUser().getId(),sdf1.format(System.currentTimeMillis()),4,0,0,prodPlanHeader.getCatId(),0,"","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
+                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(0, prodPlanHeader.getProductionHeaderId(),prodDate,1,toId,toName,toId,toName,loginUser.getUser().getId(),sdf1.format(System.currentTimeMillis()),loginUser.getUser().getId(),sdf1.format(System.currentTimeMillis()),4,0,0,prodPlanHeader.getCatId(),0,"Layering Cream","",prodPlanHeader.getIsPlanned(),0,0,sdf.format(System.currentTimeMillis()),0,sdf.format(System.currentTimeMillis()),billDetailList);
                     saveDetail(billOfMaterialHeader,model);
 
                     Log.e("MYTAG","-----------------------------------Header and detail------------------------"+billOfMaterialHeader);
@@ -535,9 +538,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
                             //totalamount-=itemDetailList.get(k).getTotal();
                             //String no = String.format("%.3f", totalamount);
                             edEditQty.setText(""+totalamount);
-
                         }
-
 
                     }
 
@@ -691,7 +692,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
 
                         Log.e("ASSIGN ITEM ID STRING","---------------------------------"+itemId);
 
-                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),1,toId,0,0,itemId,"","",0,mixList);
+                            MixingHeaderDetail mixingHeaderDetail=new MixingHeaderDetail(0,sdf.format(System.currentTimeMillis()),prodPlanHeader.getProductionHeaderId(),prodPlanHeader.getProductionBatch(),2,0,prodPlanHeader.getTimeSlot(),1,toId,0,0,itemId,"Layering Cream","",0,mixList);
                             saveMixing(mixingHeaderDetail,prodPlanHeader);
 
                             commonDialog1.dismiss();

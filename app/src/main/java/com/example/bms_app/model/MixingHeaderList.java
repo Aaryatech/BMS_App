@@ -53,6 +53,7 @@ public class MixingHeaderList {
     @SerializedName("productionId")
     @Expose
     private Integer productionId;
+    int visibleStatus;
 
     public Integer getMixId() {
         return mixId;
@@ -182,6 +183,15 @@ public class MixingHeaderList {
         this.productionId = productionId;
     }
 
+
+    public int getVisibleStatus() {
+        return visibleStatus;
+    }
+
+    public void setVisibleStatus(int visibleStatus) {
+        this.visibleStatus = visibleStatus;
+    }
+
     @Override
     public String toString() {
         return "MixingHeaderList{" +
@@ -201,6 +211,7 @@ public class MixingHeaderList {
                 ", exBool1=" + exBool1 +
                 ", mixingDetailed=" + mixingDetailed +
                 ", productionId=" + productionId +
+                ", visibleStatus=" + visibleStatus +
                 '}';
     }
 }

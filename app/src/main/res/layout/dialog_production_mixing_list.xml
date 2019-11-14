@@ -115,7 +115,7 @@
                 android:textColor="@color/colorWhite"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="end"
-                android:text="Reciv Qty" />
+                android:text="Auto Order Qty" />
 
             <TextView
                 android:layout_width="match_parent"

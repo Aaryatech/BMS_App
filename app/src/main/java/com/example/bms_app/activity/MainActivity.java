@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,12 +109,23 @@ public class MainActivity extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
 
         TextView tvNavHeadName = header.findViewById(R.id.tvNavHeadName);
+        LinearLayout linearLayout_header = header.findViewById(R.id.linearLayout_header);
         TextView tvNavHeadDesg = header.findViewById(R.id.tvNavHeadDesg);
         //CircleImageView ivNavHeadPhoto = header.findViewById(R.id.ivNavHeadPhoto);
 
         if (loginUser != null) {
             tvNavHeadName.setText("" + loginUser.getUser().getUsername());
-           // tvNavHeadDesg.setText("" + loginUser.getEmpDeptName());
+
+            linearLayout_header.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new MainFragment(), "Exit");
+                    ft.commit();
+                }
+            });
+
+        // tvNavHeadDesg.setText("" + loginUser.getEmpDeptName());
 
 //            try {
 //                Picasso.with(HomeActivity.this).load(Constants.IMAGE_URL + "" + loginUser.getEmpPhoto()).placeholder(getResources().getDrawable(R.drawable.profile)).into(ivNavHeadPhoto);
@@ -434,18 +446,6 @@ public class MainActivity extends AppCompatActivity
              childModel = new MenuModel("BMS Stock", false, false, "BMS Stock");
             childModelsList.add(childModel);
 
-//
-//        childModel = new MenuModel("Layering Cream Production", false, false, "Layering Cream Production");
-//        childModelsList.add(childModel);
-//
-//        childModel = new MenuModel("Coting Cream Production", false, false, "Coting Cream Production");
-//        childModelsList.add(childModel);
-//
-//        childModel = new MenuModel("Issues from BMS", false, false, "Issues from BMS");
-//        childModelsList.add(childModel);
-//
-//        childModel = new MenuModel("Manual Production", false, false, "Manual Production");
-//        childModelsList.add(childModel);
 
             if (menuModel.hasChildren) {
                 childList.put(menuModel, childModelsList);
@@ -584,19 +584,11 @@ public class MainActivity extends AppCompatActivity
                         adf.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
                     }
-//                    if(model.getUrl().equalsIgnoreCase("Manual Production"))
-//                    {
-//                        Fragment adf = new ManualProdFragment();
-//                        Bundle args = new Bundle();
-//                        args.putString("slugName", model.getUrl());
-//                        adf.setArguments(args);
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MainFragment").commit();
-//                    }
                     if(model.getUrl().equalsIgnoreCase("Logout"))
                     {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
                         builder.setTitle("Logout");
-                        builder.setMessage("Are you sure you want to logout?");
+                        builder.setMessage("Are you sure ! you want to logout?");
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

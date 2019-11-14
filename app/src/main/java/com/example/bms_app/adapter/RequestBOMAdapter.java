@@ -120,7 +120,7 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
     }
 
     private class DeptDialog extends Dialog {
-        public Button btnCancel,btnSubmit,btnAppReject;
+        public Button btnCancel,btnSubmit;
         public RecyclerView recyclerView;
         public ImageView ivClose;
         private AllBomRequestAdapter mAdapter;
@@ -157,7 +157,6 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
 
             btnSubmit = (Button) findViewById(R.id.btnSubmit);
             ivClose = (ImageView) findViewById(R.id.ivClose);
-            btnAppReject = (Button) findViewById(R.id.btnAppReject);
             btnCancel = (Button) findViewById(R.id.btnCancel);
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -177,18 +176,19 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
             if(billOfAllMaterialHeader.getStatus()==0)
             {
                 btnSubmit.setVisibility(View.VISIBLE);
-                btnAppReject.setVisibility(View.GONE);
-            }else if(billOfAllMaterialHeader.getStatus()==2)
-            {
-                btnSubmit.setVisibility(View.GONE);
-                btnAppReject.setVisibility(View.VISIBLE);
-            }else if(billOfAllMaterialHeader.getStatus()==1 || billOfAllMaterialHeader.getStatus()==3 || billOfAllMaterialHeader.getStatus()==4)
-            {
-                btnSubmit.setVisibility(View.GONE);
-                btnAppReject.setVisibility(View.VISIBLE);
-                btnAppReject.setClickable(false);
-                btnAppReject.setBackgroundResource(R.drawable.rounded_corner_light_button);
+               // btnAppReject.setVisibility(View.GONE);
             }
+//            else if(billOfAllMaterialHeader.getStatus()==2)
+//            {
+//                btnSubmit.setVisibility(View.GONE);
+//                btnAppReject.setVisibility(View.VISIBLE);
+//            }else if(billOfAllMaterialHeader.getStatus()==1 || billOfAllMaterialHeader.getStatus()==3 || billOfAllMaterialHeader.getStatus()==4)
+//            {
+//                btnSubmit.setVisibility(View.GONE);
+//                btnAppReject.setVisibility(View.VISIBLE);
+//                btnAppReject.setClickable(false);
+//                btnAppReject.setBackgroundResource(R.drawable.rounded_corner_light_button);
+//            }
 
 
             btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -209,21 +209,22 @@ public class RequestBOMAdapter extends RecyclerView.Adapter<RequestBOMAdapter.My
                 @Override
                 public void onClick(View v) {
                     dismiss();
+                    if(detailList.size()==0)
+                    {
+                        Toast.makeText(context, "Detail is Empty...", Toast.LENGTH_SHORT).show();
+                    }else {
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 
-                    BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(billOfAllMaterialHeader.getReqId(), billOfAllMaterialHeader.getProductionId(),billOfAllMaterialHeader.getProductionDate(),billOfAllMaterialHeader.getIsProduction(),billOfAllMaterialHeader.getFromDeptId(),billOfAllMaterialHeader.getFromDeptName(),billOfAllMaterialHeader.getToDeptId(),billOfAllMaterialHeader.getToDeptName(),0,billOfAllMaterialHeader.getReqDate(),billOfAllMaterialHeader.getApprovedUserId(),sdf1.format(System.currentTimeMillis()),1,billOfAllMaterialHeader.getExBool1(),billOfAllMaterialHeader.getDelStatus(),billOfAllMaterialHeader.getExInt1(),billOfAllMaterialHeader.getExInt2(),"","",billOfAllMaterialHeader.getIsPlan(),billOfAllMaterialHeader.getIsManual(),billOfAllMaterialHeader.getRejUserId(),billOfAllMaterialHeader.getRejDate(),billOfAllMaterialHeader.getRejApproveUserId(),billOfAllMaterialHeader.getRejApproveDate(),detailList);
-                    saveDetail(billOfMaterialHeader);
+                        BillOfMaterialHeader billOfMaterialHeader = new BillOfMaterialHeader(billOfAllMaterialHeader.getReqId(), billOfAllMaterialHeader.getProductionId(), billOfAllMaterialHeader.getProductionDate(), billOfAllMaterialHeader.getIsProduction(), billOfAllMaterialHeader.getFromDeptId(), billOfAllMaterialHeader.getFromDeptName(), billOfAllMaterialHeader.getToDeptId(), billOfAllMaterialHeader.getToDeptName(), 0, billOfAllMaterialHeader.getReqDate(), billOfAllMaterialHeader.getApprovedUserId(), sdf1.format(System.currentTimeMillis()), 1, billOfAllMaterialHeader.getExBool1(), billOfAllMaterialHeader.getDelStatus(), billOfAllMaterialHeader.getExInt1(), billOfAllMaterialHeader.getExInt2(), "", "", billOfAllMaterialHeader.getIsPlan(), billOfAllMaterialHeader.getIsManual(), billOfAllMaterialHeader.getRejUserId(), billOfAllMaterialHeader.getRejDate(), billOfAllMaterialHeader.getRejApproveUserId(), billOfAllMaterialHeader.getRejApproveDate(), detailList);
+                        saveDetail(billOfMaterialHeader);
+                    }
 
                 }
             });
 
-//            if (billOfMaterialHeader.getBillOfMaterialDetailed() != null) {
-//                billOfMaterialHeader.getBillOfMaterialDetailed().clear();
-//                for (int i = 0; i < billOfMaterialHeader.getBillOfMaterialDetailed().size(); i++) {
-//                    detailList.add(billOfMaterialHeader.getBillOfMaterialDetailed().get(i));
-//                }
+
             Log.e("Detail List Dialog","----------------------------------------"+detailList);
             mAdapter = new AllBomRequestAdapter(detailList, context);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);

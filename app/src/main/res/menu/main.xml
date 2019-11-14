@@ -22,12 +22,12 @@
         android:icon="@drawable/ic_logout"
         android:title=""
         android:visible="false"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_Name"
         android:orderInCategory="100"
-        android:title=""
+        android:title="Balaji"
         android:visible="false"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

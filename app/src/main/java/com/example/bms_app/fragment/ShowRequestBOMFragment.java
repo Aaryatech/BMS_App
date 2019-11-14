@@ -312,7 +312,7 @@ public class ShowRequestBOMFragment extends Fragment {
 
             Window window = getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
-            wlp.gravity = Gravity.TOP | Gravity.RIGHT;
+            wlp.gravity = Gravity.CENTER | Gravity.RIGHT;
             wlp.x = 10;
             wlp.y = 10;
             wlp.width = WindowManager.LayoutParams.MATCH_PARENT;

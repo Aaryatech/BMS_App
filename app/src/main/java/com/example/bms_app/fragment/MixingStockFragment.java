@@ -146,6 +146,14 @@ public EditText edFromDate,edToDate;
             Log.e("Exception","------------------------------"+e);
         }
 
+        if(strDept==10)
+        {
+            getActivity().setTitle("Mixing Stock");
+        }else if(strDept==11)
+        {
+            getActivity().setTitle("BMS Stock");
+        }
+
 
         optionArray.add("Select Option");
         optionArray.add("Get Current Stock");
@@ -262,6 +270,20 @@ public EditText edFromDate,edToDate;
                 e.printStackTrace();
             }
             Log.e("Date","------------------------FROM- DATE-------------------------------"+dateEnd);
+
+            
+            Calendar c = Calendar.getInstance();
+            c.setTime(dateEnd); // Now use today date.
+            c.add(Calendar.DATE, -1); // Adding 1 day
+            String stDate = formatter1.format(c.getTime());
+            Log.e("DATE","---------------------------------------------NEXT DATE---------------------------------"+stDate);
+            Date stockDate = null;
+            try {
+                 stockDate = formatter1.parse(stDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            
             int yr, mn, dy;
             if (fromDateMillis > 0) {
                 Calendar purchaseCal = Calendar.getInstance();
@@ -277,7 +299,7 @@ public EditText edFromDate,edToDate;
             }
             DatePickerDialog dialog = new DatePickerDialog(getContext(), fromDateListener, yr, mn, dy);
             // dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-            dialog.getDatePicker().setMaxDate(dateEnd.getTime());
+            dialog.getDatePicker().setMaxDate(stockDate.getTime());
             dialog.show();
         }else if(v.getId()==R.id.edToDate)
         {
@@ -305,6 +327,19 @@ public EditText edFromDate,edToDate;
                 e.printStackTrace();
             }
             Log.e("Date","------------------------TO- DATE-------------------------------"+dateEnd);
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(dateEnd); // Now use today date.
+            c.add(Calendar.DATE, -1); // Adding 1 day
+            String stDate = formatter1.format(c.getTime());
+            Log.e("DATE","---------------------------------------------NEXT DATE---------------------------------"+stDate);
+            Date stockDate = null;
+            try {
+                stockDate = formatter1.parse(stDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
             purchaseCal = Calendar.getInstance();
             yr = purchaseCal.get(Calendar.YEAR);
             mn = purchaseCal.get(Calendar.MONTH);
@@ -312,17 +347,23 @@ public EditText edFromDate,edToDate;
 
             DatePickerDialog dialog = new DatePickerDialog(getContext(), toDateListener, yr, mn, dy);
            // dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-            dialog.getDatePicker().setMaxDate(dateEnd.getTime());
-            dialog.getDatePicker().setMinDate(fromdate.getTime());
+            dialog.getDatePicker().setMaxDate(stockDate.getTime());
+            try
+            {
+                dialog.getDatePicker().setMinDate(fromdate.getTime());
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
             dialog.show();
         }else if(v.getId()==R.id.btnSearch)
         {
            // int typeId = spType.getSelectedItemPosition();
             int optionId = spOption.getSelectedItemPosition();
             String strFromDate=edFromDate.getText().toString().trim();
-            String strToDate=edFromDate.getText().toString().trim();
-            Log.e("ID","---------------------------------------------TYPE---------------------------------"+typeId);
-            Log.e("ID","---------------------------------------------OPTION---------------------------------"+optionId);
+            String strToDate=edToDate.getText().toString().trim();
+
 
             if(strDept==10)
             {
@@ -334,6 +375,9 @@ public EditText edFromDate,edToDate;
                 int type = spType.getSelectedItemPosition();
                 typeId=type+1;
             }
+
+            Log.e("ID","---------------------------------------------TYPE---------------------------------"+typeId);
+            Log.e("ID","---------------------------------------------OPTION---------------------------------"+optionId);
 
             if(typeId==1 && optionId==1)
             {

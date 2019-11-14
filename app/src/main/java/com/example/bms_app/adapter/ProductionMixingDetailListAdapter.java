@@ -26,7 +26,7 @@ public class ProductionMixingDetailListAdapter extends RecyclerView.Adapter<Prod
     @Override
     public ProductionMixingDetailListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.production_mixing_list_adapter, viewGroup, false);
+                .inflate(R.layout.layout_bms_list_adapter, viewGroup, false);
 
         return new MyViewHolder(itemView);
     }
@@ -39,7 +39,9 @@ public class ProductionMixingDetailListAdapter extends RecyclerView.Adapter<Prod
         myViewHolder.tvMultiplicationFactor.setText(""+model.getExVarchar1());
         myViewHolder.tvAutoOrderQty.setText(""+model.getAutoOrderQty());
         myViewHolder.tvReceivedQty.setText(""+model.getReceivedQty());
-        myViewHolder.tvProductionQty.setText(""+model.getProductionQty());
+
+        Double roundOff=Math.ceil(model.getProductionQty());
+        myViewHolder.tvProductionQty.setText(""+roundOff);
 
     }
 

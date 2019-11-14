@@ -82,6 +82,8 @@
             android:drawablePadding="10dp"
             android:fontFamily="@font/sf_ui_regular"
             android:text="" />
+
+
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

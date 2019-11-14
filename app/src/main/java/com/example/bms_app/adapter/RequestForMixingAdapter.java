@@ -78,6 +78,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
         final ProdPlanHeader model=reqMixingList.get(i);
         myViewHolder.tvProductId.setText(""+model.getProductionHeaderId());
         myViewHolder.tvDate.setText(model.getProductionDate());
+        myViewHolder.tvCatName.setText(model.getCatName());
 
         if(model.getIsPlanned()==1) {
             myViewHolder.tvIsPlane.setText("Yes");
@@ -161,7 +162,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvProductId,tvStatus,tvDate,tvIsPlane;
+        public TextView tvProductId,tvStatus,tvDate,tvIsPlane,tvCatName;
         public TextView tvMixing,tvStore;
         public CardView cardView;
         public MyViewHolder(@NonNull View itemView) {
@@ -170,6 +171,8 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
             tvStatus=itemView.findViewById(R.id.tvStatus);
             tvDate=itemView.findViewById(R.id.tvDate);
             tvIsPlane=itemView.findViewById(R.id.tvIsPlane);
+
+            tvCatName=itemView.findViewById(R.id.tvCatName);
 
             cardView=itemView.findViewById(R.id.cardView);
 

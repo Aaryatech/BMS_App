@@ -117,6 +117,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
         final ProdPlanHeader model=reqMixingList.get(i);
         myViewHolder.tvProductId.setText(""+model.getProductionHeaderId());
         myViewHolder.tvDate.setText(model.getProductionDate());
+        myViewHolder.tvCatName.setText(model.getCatName());
 
         if(model.getIsPlanned()==1) {
             myViewHolder.tvIsPlane.setText("Yes");
@@ -157,7 +158,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvProductId,tvStatus,tvDate,tvIsPlane;
+        public TextView tvProductId,tvStatus,tvDate,tvIsPlane,tvCatName;
         public CardView cardView;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -167,6 +168,7 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
             tvDate=itemView.findViewById(R.id.tvDate);
             tvIsPlane=itemView.findViewById(R.id.tvIsPlane);
             cardView=itemView.findViewById(R.id.cardView);
+            tvCatName=itemView.findViewById(R.id.tvCatName);
 
         }
     }
@@ -867,13 +869,14 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
 
                     table.addCell("" + detailList.get(i).getRmName());
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getTotal()));
+                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getPrevtotal()*detailList.get(i).getMulFactor()));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
 
+                    Double strRounOff=Math.ceil(detailList.get(i).getTotal());
 
-                    cell = new PdfPCell(new Phrase("" + detailList.get(i).getTotal()));
+                    cell = new PdfPCell(new Phrase("" + strRounOff));
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
@@ -882,7 +885,6 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                     cell.setHorizontalAlignment(2);
                     cell.setBackgroundColor(myColor);
                     table.addCell(cell);
-
 
                 }
 

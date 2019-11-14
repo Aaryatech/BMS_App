@@ -49,7 +49,7 @@ public class ProductionMixingDetailAdapter extends RecyclerView.Adapter<Producti
        // myViewHolder.edEditReqQty.setText(""+model.getTotal()*model.getMulFactor());
 
         //double roundOff = Math.round(model.getTotal()*model.getMulFactor() * 10d) / 10d;
-        Double roundOff =Math.round(model.getTotal()*model.getMulFactor()*100)/100.0d;
+        Double roundOff =Math.ceil(model.getTotal()*model.getMulFactor());
 
         Log.e("ROUND OFF","-----------------------------------"+roundOff);
         myViewHolder.edEditReqQty.setText(""+roundOff);
@@ -57,6 +57,7 @@ public class ProductionMixingDetailAdapter extends RecyclerView.Adapter<Producti
         try {
             model.setPrevtotal(model.getTotal());
             float editQty = model.getTotal()*model.getMulFactor();
+          //  float editQty = model.getTotal();
             model.setTotal(editQty);
             Log.e(" PREV TOTAL","------------------------------------------"+model.getPrevtotal());
             Log.e(" TOTAL","------------------------------------------"+model.getTotal());
