@@ -757,9 +757,6 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 pt.addCell(cell);
 
 
-
-
-
                 PdfPTable ptDate = new PdfPTable(4);
                 float[] colWidth = new float[]{17, 40, 50, 25};
                 ptDate.setWidths(colWidth);
@@ -789,7 +786,6 @@ public class ProductionMixingAdapter extends RecyclerView.Adapter<ProductionMixi
                 cell.setHorizontalAlignment(2);
                 cell.setColspan(1);
                 ptDate.addCell(cell);
-
 
 
                 PdfPTable pTable = new PdfPTable(1);

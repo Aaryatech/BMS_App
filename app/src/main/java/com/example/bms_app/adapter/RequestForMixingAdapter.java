@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.example.bms_app.R;
 import com.example.bms_app.activity.MainActivity;
 import com.example.bms_app.constants.Constants;
-import com.example.bms_app.fragment.RequestForMixingFragment;
+import com.example.bms_app.fragment.ShowAllRequestFragment;
 import com.example.bms_app.model.BillOfMaterialDetailed;
 import com.example.bms_app.model.BillOfMaterialHeader;
 import com.example.bms_app.model.Configure;
@@ -385,7 +385,7 @@ public class RequestForMixingAdapter extends RecyclerView.Adapter<RequestForMixi
                             Toast.makeText(context, "Request Submited successfully....", Toast.LENGTH_SHORT).show();
                             MainActivity activity=(MainActivity)context;
                             FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new RequestForMixingFragment(), "MainFragment");
+                            ft.replace(R.id.content_frame, new ShowAllRequestFragment(), "MainFragment");
                             ft.commit();
                             commonDialog1.dismiss();
 

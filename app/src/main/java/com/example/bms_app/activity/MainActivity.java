@@ -133,8 +133,6 @@ public class MainActivity extends AppCompatActivity
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
-
-
         }
 
         if (loginUser == null) {
@@ -146,7 +144,6 @@ public class MainActivity extends AppCompatActivity
         ft.replace(R.id.content_frame, new MainFragment(), "Exit");
         ft.commit();
     }
-
 
 
     private void getSettingValue(String mix) {
@@ -382,6 +379,7 @@ public class MainActivity extends AppCompatActivity
             Gson gson = new Gson();
             login = gson.fromJson(userStr, Login.class);
             Log.e("HOME_ACTIVITY : ", "--------USER-------" + loginUser);
+            Log.e("HOME : ", "--------LOGIN-------" + login);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -393,7 +391,7 @@ public class MainActivity extends AppCompatActivity
              menuModel = new MenuModel("Production Department", true, true, ""); //Menu of Java Tutorials
             headerList.add(menuModel);
 
-             childModel = new MenuModel("Request for Mixing", false, false, "Request for Mixing");
+            childModel = new MenuModel("Request for Mixing", false, false, "Request for Mixing");
             childModelsList.add(childModel);
 
             childModel = new MenuModel("Request for Stored", false, false, "Request for Stored");

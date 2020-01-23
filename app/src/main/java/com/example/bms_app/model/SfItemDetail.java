@@ -33,6 +33,9 @@ public class SfItemDetail {
     @Expose
     private Integer delStatus;
 
+    private Integer seqNo;
+
+
     public SfItemDetail(Integer sfDid, Integer sfId, Integer rmType, Integer rmId, String rmName, float rmQty, Integer rmUnit, Integer rmWeight, Integer delStatus) {
         this.sfDid = sfDid;
         this.sfId = sfId;
@@ -117,6 +120,14 @@ public class SfItemDetail {
         this.delStatus = delStatus;
     }
 
+    public Integer getSeqNo() {
+        return seqNo;
+    }
+
+    public void setSeqNo(Integer seqNo) {
+        this.seqNo = seqNo;
+    }
+
     @Override
     public String toString() {
         return "SfItemDetail{" +
@@ -129,6 +140,7 @@ public class SfItemDetail {
                 ", rmUnit=" + rmUnit +
                 ", rmWeight=" + rmWeight +
                 ", delStatus=" + delStatus +
+                ", seqNo=" + seqNo +
                 '}';
     }
 }

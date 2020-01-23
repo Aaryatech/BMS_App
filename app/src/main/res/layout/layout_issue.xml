@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.1"
             android:fontFamily="@font/sf_ui_regular"
-            android:gravity="center"
+            android:gravity="end"
             android:text="2" />
 
 

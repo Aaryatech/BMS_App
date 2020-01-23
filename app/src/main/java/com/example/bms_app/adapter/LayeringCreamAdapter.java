@@ -162,7 +162,7 @@ public class LayeringCreamAdapter extends RecyclerView.Adapter<LayeringCreamAdap
 
                             Log.e("PRODUCTION : ", " ----------------------SF ITEM DETAIL----------------------- " + response.body());
                              sfItemDetailList.clear();
-                            sfItemDetailList.addAll(response.body().getSfItemDetail());
+                             sfItemDetailList.addAll(response.body().getSfItemDetail());
 
                             Log.e("LIST : ", " ----------------------LIST----------------------- " + sfItemDetailList);
 

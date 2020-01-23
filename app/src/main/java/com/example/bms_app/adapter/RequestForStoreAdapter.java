@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.example.bms_app.R;
 import com.example.bms_app.activity.MainActivity;
 import com.example.bms_app.constants.Constants;
-import com.example.bms_app.fragment.RequestForStoreFragment;
+import com.example.bms_app.fragment.ShowAllRequestFragment;
 import com.example.bms_app.model.BillOfMaterialDetailed;
 import com.example.bms_app.model.BillOfMaterialHeader;
 import com.example.bms_app.model.Configure;
@@ -374,7 +374,7 @@ public class RequestForStoreAdapter extends RecyclerView.Adapter<RequestForStore
                             Log.e("UPDATE : ", " ------------------------------UPDATE STORE------------------------ " + response.body());
                             MainActivity activity=(MainActivity)context;
                             FragmentTransaction ft =activity.getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new RequestForStoreFragment(), "MainFragment");
+                            ft.replace(R.id.content_frame, new ShowAllRequestFragment(), "MainFragment");
                             ft.commit();
                             commonDialog1.dismiss();
 

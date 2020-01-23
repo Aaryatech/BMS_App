@@ -108,7 +108,6 @@ public class RequestForAllAdapter extends RecyclerView.Adapter<RequestForAllAdap
         myViewHolder.tvDate.setText(""+model.getReqDate());
         myViewHolder.tvDept.setText(""+model.getToDeptName());
 
-
         try {
             if(model.getStatus()==0)
             {
